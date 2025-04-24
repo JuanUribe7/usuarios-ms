@@ -12,4 +12,5 @@ public interface UserPersistencePort {
     void updateUser(User user);
 
     Optional<User> findByEmail(String email);
+    Optional<User> findByIdentityDocument(String identityDocument);
 }

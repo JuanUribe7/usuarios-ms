@@ -15,7 +15,7 @@ public class BeanConfiguration {
 
     @Bean(name = "ownerServicePort")
     public UserServicePort ownerServicePort(UserPersistencePort userPersistencePort) {
-        return new UserUseCase(userPersistencePort);
+        return new UserUseCase(userPersistencePort, passwordEncoder());
 
     }
 

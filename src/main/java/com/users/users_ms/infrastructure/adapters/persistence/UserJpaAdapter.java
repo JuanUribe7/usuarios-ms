@@ -45,7 +45,7 @@ public class UserJpaAdapter implements UserPersistencePort {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
+    public  Optional<User> findByEmail(String email) {
         return userRepository
                 .findByEmail(email)
                 .map(mapper::toModel);
@@ -59,5 +59,12 @@ public class UserJpaAdapter implements UserPersistencePort {
     @Override
     public Optional<User> findById(Long id) {
         return userRepository.findById(id).map(mapper::toModel);
+    }
+
+    @Override
+    public Optional<User> findByIdentityDocument(String identityDocument) {
+        return userRepository
+                .findByIdentityDocument(identityDocument)
+                .map(mapper::toModel);
     }
 }

@@ -1,40 +1,30 @@
 package com.users.users_ms.application.dto.request;
 
-import com.users.users_ms.commons.validation.ValidAge.ValidAge;
-import com.users.users_ms.commons.validation.document.ValidIdentityDocument;
-import com.users.users_ms.commons.validation.email.ValidEmail;
-import com.users.users_ms.commons.validation.name.ValidName;
-import com.users.users_ms.commons.validation.password.ValidPassword;
-import com.users.users_ms.commons.validation.phone.ValidPhone;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 @Schema(description = "DTO para la creación de usuarios")
 public class UserRequestDto {
 
     @Schema(description = "Nombre del usuario", example = "Juan", required = true)
-    @ValidName
+    @NotNull(message = "El nombre no puede estar vacío")
     private String name;
 
     @Schema(description = "Apellido del usuario", example = "Pérez", required = true)
-    @ValidName
+
     private String lastName;
 
     @Schema(description = "Documento de identidad", example = "12345678", required = true)
-    @ValidIdentityDocument
     private String identityDocument;
     @Schema(description = "Teléfono del usuario", example = "+573005698325", required = true)
-    @ValidPhone
     private String phone;
 
     @Schema(description = "Fecha de nacimiento", example = "1990-01-01", required = true)
-    @ValidAge
     private LocalDate birthDate;
     @Schema(description = "Correo electrónico del usuario", example = "juan@example.com", required = true)
-    @ValidEmail
     private String email;
     @Schema(description = "Contraseña segura", example = "ClaveSegura123!", required = true)
-    @ValidPassword
     private String password;
 
 

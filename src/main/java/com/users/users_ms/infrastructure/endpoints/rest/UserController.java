@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Usuarios", description = "Operaciones relacionadas con la gestión de usuarios")
+@Tag(name = "users", description = "Operaciones relacionadas con la gestión de usuarios")
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
@@ -36,8 +36,7 @@ public class UserController {
     @PostMapping("/owner")
     public ResponseEntity<UserResponseDto> createOwner(
             @Valid @RequestBody UserRequestDto dto) {
-        var created = userService.saveOwner(dto);
-        return new ResponseEntity<>(mapper.toResponseDto(created), HttpStatus.CREATED);
+        return  ResponseEntity.ok(userService.saveOwner(dto));
     }
 
 
