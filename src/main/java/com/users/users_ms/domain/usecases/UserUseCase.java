@@ -8,6 +8,8 @@ import com.users.users_ms.domain.validation.PassValidator;
 import com.users.users_ms.domain.validation.Validator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 public class UserUseCase implements UserServicePort {
 
     private final PasswordEncoder passwordEncoder;
@@ -24,5 +26,10 @@ public class UserUseCase implements UserServicePort {
         owner.setRole(Role.OWNER);
         owner.setPassword(passwordEncoder.encode(owner.getPassword()));
         return userPersistencePort.saveUser(owner);
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userPersistencePort.findById(id);
     }
 }

@@ -3,103 +3,101 @@ package com.users.users_ms.infrastructure.mappers;
 import com.users.users_ms.domain.model.Role;
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.infrastructure.entities.UserEntity;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserEntityMapperTest {
 
-    private UserEntityMapper mapper;
-
-    @BeforeEach
-    void setUp() {
-        mapper = Mappers.getMapper(UserEntityMapper.class);
-    }
+    private final UserEntityMapper mapper = Mappers.getMapper(UserEntityMapper.class);
 
     @Test
-    void testToEntity_AllFieldsMappedCorrectly() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("Carlos");
-        user.setLastName("Ramirez");
-        user.setIdentityDocument("98765432");
-        user.setPhone("+573001112233");
-        user.setEmail("carlos@example.com");
-        user.setPassword("clave123");
-        user.setRole(Role.CLIENT);
-
-        UserEntity entity = mapper.toEntity(user);
-
-        assertNotNull(entity);
-        assertEquals(1L, entity.getId());
-        assertEquals("Carlos", entity.getName());
-        assertEquals("Ramirez", entity.getLastName());
-        assertEquals("98765432", entity.getIdentityDocument());
-        assertEquals("+573001112233", entity.getPhone());
-        assertEquals("carlos@example.com", entity.getEmail());
-        assertEquals("clave123", entity.getPassword());
-        assertEquals(Role.CLIENT, entity.getRole());
-    }
-
-    @Test
-    void testToModel_AllFieldsMappedCorrectly() {
+    void toModel_ShouldMapEntityToModel() {
+        // Arrange
         UserEntity entity = new UserEntity();
-        entity.setId(2L);
-        entity.setName("Laura");
-        entity.setLastName("Gomez");
-        entity.setIdentityDocument("22334455");
-        entity.setPhone("+573001234567");
-        entity.setEmail("laura@example.com");
-        entity.setPassword("clave456");
-        entity.setRole(Role.EMPLOYEE);
+        entity.setId(1L);
+        entity.setPassword("secret");
+        entity.setName("Juan");
+        entity.setLastName("Perez");
+        entity.setIdentityDocument("ABC123");
+        entity.setPhone("3001234567");
+        entity.setBirthDate(LocalDate.of(1995, 5, 20));
+        entity.setEmail("juan.perez@example.com");
+        entity.setRole(Role.OWNER);
 
-        User user = mapper.toModel(entity);
 
-        assertNotNull(user);
-        assertEquals(2L, user.getId());
-        assertEquals("Laura", user.getName());
-        assertEquals("Gomez", user.getLastName());
-        assertEquals("22334455", user.getIdentityDocument());
-        assertEquals("+573001234567", user.getPhone());
-        assertEquals("laura@example.com", user.getEmail());
-        assertEquals("clave456", user.getPassword());
-        assertEquals(Role.EMPLOYEE, user.getRole());
+
+        // Act
+        User model = mapper.toModel(entity);
+
+        // Assert
+        assertEquals(entity.getId(), model.getId());
+        assertEquals(entity.getPassword(), model.getPassword());
+        assertEquals(entity.getName(), model.getName());
+        assertEquals(entity.getLastName(), model.getLastName());
+        assertEquals(entity.getIdentityDocument(), model.getIdentityDocument());
+        assertEquals(entity.getPhone(), model.getPhone());
+        assertEquals(entity.getBirthDate(), model.getBirthDate());
+        assertEquals(entity.getEmail(), model.getEmail());
+        assertEquals(entity.getRole(), model.getRole());
     }
 
     @Test
-    void testToEntity_NullFieldsHandledGracefully() {
-        User user = new User();  // All fields null
+    void toEntity_ShouldMapModelToEntity() {
+        // Arrange
+        User model = new User();
+        model.setId(2L);
+        model.setPassword("pwd");
+        model.setName("Ana");
+        model.setLastName("Gomez");
+        model.setIdentityDocument("XYZ789");
+        model.setPhone("3107654321");
+        model.setBirthDate(LocalDate.of(1988, 12, 10));
+        model.setEmail("ana.gomez@example.com");
+        model.setRole(Role.ADMIN);
 
-        UserEntity entity = mapper.toEntity(user);
+        // Act
+        UserEntity entity = mapper.toEntity(model);
 
-        assertNotNull(entity);
-        assertNull(entity.getId());
-        assertNull(entity.getName());
-        assertNull(entity.getLastName());
-        assertNull(entity.getIdentityDocument());
-        assertNull(entity.getPhone());
-        assertNull(entity.getEmail());
-        assertNull(entity.getPassword());
-        assertNull(entity.getRole());
+        // Assert
+        assertEquals(model.getId(), entity.getId());
+        assertEquals(model.getPassword(), entity.getPassword());
+        assertEquals(model.getName(), entity.getName());
+        assertEquals(model.getLastName(), entity.getLastName());
+        assertEquals(model.getIdentityDocument(), entity.getIdentityDocument());
+        assertEquals(model.getPhone(), entity.getPhone());
+        assertEquals(model.getBirthDate(), entity.getBirthDate());
+        assertEquals(model.getEmail(), entity.getEmail());
+        assertEquals(model.getRole(), entity.getRole());
     }
 
     @Test
-    void testToModel_NullFieldsHandledGracefully() {
-        UserEntity entity = new UserEntity(); // All fields null
+    void toModelList_ShouldMapListOfEntities() {
+        // Arrange
+        UserEntity e1 = new UserEntity();
+        e1.setId(3L);
+        e1.setName("Luis");
+        e1.setPassword("pass1");
+        // ... set other fields as needed
+        UserEntity e2 = new UserEntity();
+        e2.setId(4L);
+        e2.setName("Maria");
+        e2.setPassword("pass2");
+        // ... set other fields
+        List<UserEntity> entities = Arrays.asList(e1, e2);
 
-        User user = mapper.toModel(entity);
+        // Act
+        List<User> models = mapper.toModelList(entities);
 
-        assertNotNull(user);
-        assertNull(user.getId());
-        assertNull(user.getName());
-        assertNull(user.getLastName());
-        assertNull(user.getIdentityDocument());
-        assertNull(user.getPhone());
-        assertNull(user.getEmail());
-        assertNull(user.getPassword());
-        assertNull(user.getRole());
+        // Assert
+        assertNotNull(models);
+        assertEquals(2, models.size());
+        assertEquals(e1.getId(), models.get(0).getId());
+        assertEquals(e2.getId(), models.get(1).getId());
     }
-
 }

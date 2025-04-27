@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "users", description = "Operaciones relacionadas con la gestión de usuarios")
 @RestController
@@ -39,6 +36,16 @@ public class UserController {
         return  ResponseEntity.ok(userService.saveOwner(dto));
     }
 
+    @Operation(summary = "Obtener rol de un usuario", description = "Retorna el rol del usuario por su ID")
+    @ApiResponse(responseCode = "200", description = "Rol obtenido exitosamente")
+    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    @GetMapping("/{id}/rol")
+    public ResponseEntity<String> getUserRoleById(@PathVariable Long id) {
+        String role = userService.getUserRoleById(id);
+        return ResponseEntity.ok(role);
 
+
+
+    }
 
 }

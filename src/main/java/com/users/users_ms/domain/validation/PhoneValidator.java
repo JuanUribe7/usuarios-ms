@@ -3,6 +3,10 @@ package com.users.users_ms.domain.validation;
 
 public class PhoneValidator{
 
+    private PhoneValidator() {
+        throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
+    }
+
     public static void validate(String phone) {
         if (phone == null || phone.trim().isEmpty()) {
             throw new IllegalArgumentException("El número de teléfono no puede estar vacío");

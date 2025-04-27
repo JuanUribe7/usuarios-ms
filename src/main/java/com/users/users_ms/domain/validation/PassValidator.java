@@ -3,6 +3,12 @@ package com.users.users_ms.domain.validation;
 
 public class PassValidator {
 
+    private PassValidator() {
+        throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
+    }
+
+
+
     public static void validate(String password){
         if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("La clave no puede estar vacía");

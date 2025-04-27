@@ -7,7 +7,9 @@ import java.time.LocalDate;
 
 public class AgeValidator {
 
-
+    private AgeValidator() {
+        throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
+    }
 
 
     public static void validate(LocalDate birthDate) {

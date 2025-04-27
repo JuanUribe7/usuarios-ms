@@ -5,6 +5,10 @@ import com.users.users_ms.domain.ports.out.UserPersistencePort;
 
 public class Validator {
 
+    private Validator() {
+        throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
+    }
+
 
     public static void validate(User user , UserPersistencePort userPersistencePort) {
         AgeValidator.validate(user.getBirthDate());

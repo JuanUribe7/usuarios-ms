@@ -1,3 +1,5 @@
+// src/test/java/com/users/users_ms/infrastructure/adapters/persistence/UserJpaAdapterTest.java
+
 package com.users.users_ms.infrastructure.adapters.persistence;
 
 import com.users.users_ms.domain.exceptions.InvalidEmailException;
@@ -9,8 +11,8 @@ import com.users.users_ms.infrastructure.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,29 +31,29 @@ class UserJpaAdapterTest {
     }
 
     @Test
-    void testSaveUser_Success() {
+    void saveUser_ShouldSaveSuccessfully() {
         User user = new User();
         user.setEmail("test@example.com");
-        user.setIdentityDocument("123456");
+        user.setIdentityDocument("12345678");
 
         UserEntity entity = new UserEntity();
         UserEntity savedEntity = new UserEntity();
-        User mappedUser = new User();
+        User savedUser = new User();
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
         when(userRepository.findByIdentityDocument(user.getIdentityDocument())).thenReturn(Optional.empty());
         when(mapper.toEntity(user)).thenReturn(entity);
         when(userRepository.save(entity)).thenReturn(savedEntity);
-        when(mapper.toModel(savedEntity)).thenReturn(mappedUser);
+        when(mapper.toModel(savedEntity)).thenReturn(savedUser);
 
         User result = adapter.saveUser(user);
-        assertEquals(mappedUser, result);
+        assertEquals(savedUser, result);
     }
 
     @Test
-    void testSaveUser_EmailExists_ThrowsException() {
+    void saveUser_ShouldThrowInvalidEmailException() {
         User user = new User();
-        user.setEmail("exists@example.com");
+        user.setEmail("duplicate@example.com");
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(new UserEntity()));
 
@@ -59,10 +61,10 @@ class UserJpaAdapterTest {
     }
 
     @Test
-    void testSaveUser_IdentityExists_ThrowsException() {
+    void saveUser_ShouldThrowInvalidIdentityDocumentException() {
         User user = new User();
-        user.setEmail("unique@example.com");
-        user.setIdentityDocument("exist-doc");
+        user.setEmail("test@example.com");
+        user.setIdentityDocument("12345678");
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
         when(userRepository.findByIdentityDocument(user.getIdentityDocument())).thenReturn(Optional.of(new UserEntity()));
@@ -71,7 +73,7 @@ class UserJpaAdapterTest {
     }
 
     @Test
-    void testUpdateUser_CallsSave() {
+    void updateUser_ShouldCallRepositorySave() {
         User user = new User();
         UserEntity entity = new UserEntity();
 
@@ -83,8 +85,8 @@ class UserJpaAdapterTest {
     }
 
     @Test
-    void testFindByEmail_ReturnsMappedUser() {
-        String email = "search@example.com";
+    void findByEmail_ShouldReturnUserIfExists() {
+        String email = "test@example.com";
         UserEntity entity = new UserEntity();
         User user = new User();
 
@@ -92,13 +94,20 @@ class UserJpaAdapterTest {
         when(mapper.toModel(entity)).thenReturn(user);
 
         Optional<User> result = adapter.findByEmail(email);
-
         assertTrue(result.isPresent());
         assertEquals(user, result.get());
     }
 
     @Test
-    void testFindById_ReturnsMappedUser() {
+    void findAll_ShouldReturnList() {
+        when(userRepository.findAll()).thenReturn(Collections.emptyList());
+        when(mapper.toModelList(Collections.emptyList())).thenReturn(Collections.emptyList());
+
+        assertTrue(adapter.findAll().isEmpty());
+    }
+
+    @Test
+    void findById_ShouldReturnUserIfExists() {
         Long id = 1L;
         UserEntity entity = new UserEntity();
         User user = new User();
@@ -107,22 +116,21 @@ class UserJpaAdapterTest {
         when(mapper.toModel(entity)).thenReturn(user);
 
         Optional<User> result = adapter.findById(id);
-
         assertTrue(result.isPresent());
         assertEquals(user, result.get());
     }
 
     @Test
-    void testFindAll_ReturnsMappedUsers() {
-        List<UserEntity> entities = List.of(new UserEntity(), new UserEntity());
-        List<User> users = List.of(new User(), new User());
+    void findByIdentityDocument_ShouldReturnUserIfExists() {
+        String doc = "12345678";
+        UserEntity entity = new UserEntity();
+        User user = new User();
 
-        when(userRepository.findAll()).thenReturn(entities);
-        when(mapper.toModelList(entities)).thenReturn(users);
+        when(userRepository.findByIdentityDocument(doc)).thenReturn(Optional.of(entity));
+        when(mapper.toModel(entity)).thenReturn(user);
 
-        List<User> result = adapter.findAll();
-
-        assertEquals(users.size(), result.size());
+        Optional<User> result = adapter.findByIdentityDocument(doc);
+        assertTrue(result.isPresent());
+        assertEquals(user, result.get());
     }
-
 }

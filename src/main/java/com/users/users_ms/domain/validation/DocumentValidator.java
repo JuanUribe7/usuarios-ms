@@ -5,7 +5,9 @@ import com.users.users_ms.domain.ports.out.UserPersistencePort;
 
 public class DocumentValidator {
 
-
+    private DocumentValidator() {
+        throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
+    }
 
 
     public static void validate(String document,UserPersistencePort userPersistencePort) {

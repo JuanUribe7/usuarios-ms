@@ -4,7 +4,9 @@ package com.users.users_ms.domain.validation;
 
 
 public class NameValidator  {
-
+    private NameValidator() {
+        throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
+    }
 
     public static void validate(String name){
 

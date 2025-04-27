@@ -34,6 +34,13 @@ public class UserServiceImpl implements UserService {
         return mapper.toResponseDto(response);
     }
 
+    @Override
+    public String getUserRoleById(Long id) {
+        User user = userServicePort.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return user.getRole().name(); // Asumiendo que getRole() devuelve un enum Role
+    }
+
 }
 
 

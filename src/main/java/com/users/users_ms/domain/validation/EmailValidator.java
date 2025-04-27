@@ -4,6 +4,9 @@ import com.users.users_ms.domain.ports.out.UserPersistencePort;
 
 public class EmailValidator {
 
+    private EmailValidator() {
+        throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
+    }
 
     public static void validate(String email, UserPersistencePort userPersistencePort) {
 
