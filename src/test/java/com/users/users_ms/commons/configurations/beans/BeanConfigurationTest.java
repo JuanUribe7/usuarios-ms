@@ -1,35 +1,38 @@
-// src/test/java/com/users/users_ms/commons/configurations/beans/BeanConfigurationTest.java
 
 package com.users.users_ms.commons.configurations.beans;
 
-import com.users.users_ms.domain.ports.in.UserServicePort;
 import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.ports.in.UserServicePort;
 import com.users.users_ms.domain.usecases.UserUseCase;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest(classes = BeanConfiguration.class)
 class BeanConfigurationTest {
 
-    @Test
-    void passwordEncoder_ShouldReturnBCryptPasswordEncoder() {
-        BeanConfiguration config = new BeanConfiguration();
-        PasswordEncoder encoder = config.passwordEncoder();
+    @Autowired
+    private ApplicationContext ctx;
 
-        assertNotNull(encoder);
-        assertTrue(encoder.matches("password", encoder.encode("password")));
+    @MockBean
+    private UserPersistencePort userPersistencePort;
+
+    @Test
+    void ownerServicePortBean_shouldBeUserUseCase() {
+        Object bean = ctx.getBean("ownerServicePort");
+        assertThat(bean).isInstanceOf(UserServicePort.class)
+                .isInstanceOf(UserUseCase.class);
     }
 
     @Test
-    void ownerServicePort_ShouldReturnUserUseCaseInstance() {
-        BeanConfiguration config = new BeanConfiguration();
-        UserPersistencePort userPersistencePort = mock(UserPersistencePort.class);
-
-        UserServicePort servicePort = config.ownerServicePort(userPersistencePort);
-
-        assertNotNull(servicePort);
-        assertTrue(servicePort instanceof UserUseCase);
+    void customPasswordEncoderBean_shouldBeBCrypt() {
+        PasswordEncoder encoder = ctx.getBean(PasswordEncoder.class);
+        assertThat(encoder).isInstanceOf(BCryptPasswordEncoder.class);
     }
 }

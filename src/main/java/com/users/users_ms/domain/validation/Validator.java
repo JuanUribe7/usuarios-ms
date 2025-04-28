@@ -15,9 +15,10 @@ public class Validator {
         DocumentValidator.validate(user.getIdentityDocument(),userPersistencePort);
         EmailValidator.validate(user.getEmail(),userPersistencePort );
         NameValidator.validate(user.getName());
-        NameValidator.validate(user.getLastName());
         PhoneValidator.validate(user.getPhone());
         PassValidator.validate(user.getPassword());
         NameValidator.validate(user.getLastName());
+
+
     }
 }

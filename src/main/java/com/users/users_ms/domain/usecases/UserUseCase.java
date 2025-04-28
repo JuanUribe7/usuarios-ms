@@ -4,7 +4,7 @@ import com.users.users_ms.domain.model.Role;
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.domain.ports.in.UserServicePort;
 import com.users.users_ms.domain.ports.out.UserPersistencePort;
-import com.users.users_ms.domain.validation.PassValidator;
+
 import com.users.users_ms.domain.validation.Validator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

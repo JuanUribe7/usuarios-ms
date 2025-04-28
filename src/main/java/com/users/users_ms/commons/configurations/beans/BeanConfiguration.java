@@ -15,12 +15,12 @@ public class BeanConfiguration {
 
     @Bean(name = "ownerServicePort")
     public UserServicePort ownerServicePort(UserPersistencePort userPersistencePort) {
-        return new UserUseCase(userPersistencePort, passwordEncoder());
+        return new UserUseCase(userPersistencePort, customPasswordEncoder());
 
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder customPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

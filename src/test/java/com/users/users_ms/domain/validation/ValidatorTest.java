@@ -2,6 +2,7 @@
 
 package com.users.users_ms.domain.validation;
 
+
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.domain.ports.out.UserPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,10 +14,10 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class ValidatorTest {
-
     private User user;
     private UserPersistencePort userPersistencePort;
 
@@ -51,7 +52,7 @@ class ValidatorTest {
             docMock.verify(() -> DocumentValidator.validate(user.getIdentityDocument(), userPersistencePort));
             emailMock.verify(() -> EmailValidator.validate(user.getEmail(), userPersistencePort));
             nameMock.verify(() -> NameValidator.validate(user.getName()));
-            nameMock.verify(() -> NameValidator.validate(user.getLastName()), times(2)); // 2 veces
+            nameMock.verify(() -> NameValidator.validate(user.getLastName()));
             phoneMock.verify(() -> PhoneValidator.validate(user.getPhone()));
             passMock.verify(() -> PassValidator.validate(user.getPassword()));
         }
@@ -62,7 +63,7 @@ class ValidatorTest {
         var constructor = Validator.class.getDeclaredConstructor();
         constructor.setAccessible(true);
 
-        Exception exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
+        InvocationTargetException exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
         Throwable cause = exception.getCause();
         assertTrue(cause instanceof UnsupportedOperationException);
         assertEquals("Clase utilitaria, no debe instanciarse.", cause.getMessage());

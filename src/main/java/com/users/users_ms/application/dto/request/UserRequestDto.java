@@ -1,6 +1,7 @@
 package com.users.users_ms.application.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -8,7 +9,7 @@ import java.time.LocalDate;
 public class UserRequestDto {
 
     @Schema(description = "Nombre del usuario", example = "Juan", required = true)
-    @NotNull(message = "El nombre no puede estar vacío")
+    @NotBlank(message = "El nombre no puede estar vacío")
     private String name;
 
     @Schema(description = "Apellido del usuario", example = "Pérez", required = true)

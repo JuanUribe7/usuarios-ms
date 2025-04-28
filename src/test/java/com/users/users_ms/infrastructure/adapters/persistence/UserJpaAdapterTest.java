@@ -19,15 +19,15 @@ import static org.mockito.Mockito.*;
 
 class UserJpaAdapterTest {
 
-    private UserRepository userRepository;
+    private UserRepository UserRepository;
     private UserEntityMapper mapper;
     private UserJpaAdapter adapter;
 
     @BeforeEach
     void setUp() {
-        userRepository = mock(UserRepository.class);
+        UserRepository = mock(UserRepository.class);
         mapper = mock(UserEntityMapper.class);
-        adapter = new UserJpaAdapter(userRepository, mapper);
+        adapter = new UserJpaAdapter(UserRepository, mapper);
     }
 
     @Test
@@ -40,10 +40,10 @@ class UserJpaAdapterTest {
         UserEntity savedEntity = new UserEntity();
         User savedUser = new User();
 
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
-        when(userRepository.findByIdentityDocument(user.getIdentityDocument())).thenReturn(Optional.empty());
+        when(UserRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+        when(UserRepository.findByIdentityDocument(user.getIdentityDocument())).thenReturn(Optional.empty());
         when(mapper.toEntity(user)).thenReturn(entity);
-        when(userRepository.save(entity)).thenReturn(savedEntity);
+        when(UserRepository.save(entity)).thenReturn(savedEntity);
         when(mapper.toModel(savedEntity)).thenReturn(savedUser);
 
         User result = adapter.saveUser(user);
@@ -55,7 +55,7 @@ class UserJpaAdapterTest {
         User user = new User();
         user.setEmail("duplicate@example.com");
 
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(new UserEntity()));
+        when(UserRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(new UserEntity()));
 
         assertThrows(InvalidEmailException.class, () -> adapter.saveUser(user));
     }
@@ -66,8 +66,8 @@ class UserJpaAdapterTest {
         user.setEmail("test@example.com");
         user.setIdentityDocument("12345678");
 
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
-        when(userRepository.findByIdentityDocument(user.getIdentityDocument())).thenReturn(Optional.of(new UserEntity()));
+        when(UserRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+        when(UserRepository.findByIdentityDocument(user.getIdentityDocument())).thenReturn(Optional.of(new UserEntity()));
 
         assertThrows(InvalidIdentityDocumentException.class, () -> adapter.saveUser(user));
     }
@@ -81,7 +81,7 @@ class UserJpaAdapterTest {
 
         adapter.updateUser(user);
 
-        verify(userRepository).save(entity);
+        verify(UserRepository).save(entity);
     }
 
     @Test
@@ -90,7 +90,7 @@ class UserJpaAdapterTest {
         UserEntity entity = new UserEntity();
         User user = new User();
 
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(entity));
+        when(UserRepository.findByEmail(email)).thenReturn(Optional.of(entity));
         when(mapper.toModel(entity)).thenReturn(user);
 
         Optional<User> result = adapter.findByEmail(email);
@@ -100,7 +100,7 @@ class UserJpaAdapterTest {
 
     @Test
     void findAll_ShouldReturnList() {
-        when(userRepository.findAll()).thenReturn(Collections.emptyList());
+        when(UserRepository.findAll()).thenReturn(Collections.emptyList());
         when(mapper.toModelList(Collections.emptyList())).thenReturn(Collections.emptyList());
 
         assertTrue(adapter.findAll().isEmpty());
@@ -112,7 +112,7 @@ class UserJpaAdapterTest {
         UserEntity entity = new UserEntity();
         User user = new User();
 
-        when(userRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(UserRepository.findById(id)).thenReturn(Optional.of(entity));
         when(mapper.toModel(entity)).thenReturn(user);
 
         Optional<User> result = adapter.findById(id);
@@ -126,7 +126,7 @@ class UserJpaAdapterTest {
         UserEntity entity = new UserEntity();
         User user = new User();
 
-        when(userRepository.findByIdentityDocument(doc)).thenReturn(Optional.of(entity));
+        when(UserRepository.findByIdentityDocument(doc)).thenReturn(Optional.of(entity));
         when(mapper.toModel(entity)).thenReturn(user);
 
         Optional<User> result = adapter.findByIdentityDocument(doc);

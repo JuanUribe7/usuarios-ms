@@ -17,7 +17,6 @@ public class PhoneValidator{
             throw new IllegalArgumentException("El '+' solo puede estar al inicio y una sola vez");
         }
 
-        // Remover '+' para validar número
         String numberOnly = phone.startsWith("+") ? phone.substring(1) : phone;
 
 

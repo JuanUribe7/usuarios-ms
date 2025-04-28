@@ -9,8 +9,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "users", description = "Operaciones relacionadas con la gestión de usuarios")
@@ -22,14 +24,17 @@ public class UserController {
     private final UserDtoMapper mapper;
 
     public UserController(UserService userService,
-                           UserDtoMapper mapper) {
+                          @Qualifier("userDtoMapperImpl") UserDtoMapper mapper) {
         this.userService = userService;
         this.mapper = mapper;
     }
 
+
+
     @Operation(summary = "Crear un nuevo usuario OWNER", description = "Crea un usuario con rol OWNER")
     @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente")
     @ApiResponse(responseCode = "400", description = "Solicitud inválida")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/owner")
     public ResponseEntity<UserResponseDto> createOwner(
             @Valid @RequestBody UserRequestDto dto) {
