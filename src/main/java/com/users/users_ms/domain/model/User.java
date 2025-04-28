@@ -12,6 +12,7 @@ public class User {
     private String email;
     private String password;
     private Role role;
+    private Long restaurantId;
 
 
 
@@ -28,6 +29,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+
 
     }
 
@@ -105,4 +107,10 @@ public class User {
         this.role = role;
     }
 
+    public Long getRestaurantId() {
+        return restaurantId;
+    }
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
+    }
 }

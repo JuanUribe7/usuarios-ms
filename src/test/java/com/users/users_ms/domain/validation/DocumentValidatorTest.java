@@ -3,7 +3,7 @@
 package com.users.users_ms.domain.validation;
 
 import com.users.users_ms.domain.exceptions.InvalidIdentityDocumentException;
-import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.ports.out.IUserPersistencePort;
 import com.users.users_ms.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,58 +15,58 @@ import static org.mockito.Mockito.*;
 
 class DocumentValidatorTest {
 
-    private UserPersistencePort userPersistencePort;
+    private IUserPersistencePort IUserPersistencePort;
 
     @BeforeEach
     void setUp() {
-        userPersistencePort = mock(UserPersistencePort.class);
+        IUserPersistencePort = mock(IUserPersistencePort.class);
     }
 
     @Test
     void validate_ShouldThrowException_WhenDocumentAlreadyExists() {
-        when(userPersistencePort.findByIdentityDocument("12345678")).thenReturn(Optional.of(new User()));
+        when(IUserPersistencePort.findByIdentityDocument("12345678")).thenReturn(Optional.of(new User()));
 
         assertThrows(InvalidIdentityDocumentException.class, () ->
-                DocumentValidator.validate("12345678", userPersistencePort));
+                DocumentValidator.validate("12345678", IUserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenDocumentIsNull() {
         assertThrows(IllegalArgumentException.class, () ->
-                DocumentValidator.validate(null, userPersistencePort));
+                DocumentValidator.validate(null, IUserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenDocumentIsEmpty() {
         assertThrows(IllegalArgumentException.class, () ->
-                DocumentValidator.validate("   ", userPersistencePort));
+                DocumentValidator.validate("   ", IUserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenDocumentContainsNonNumeric() {
         assertThrows(IllegalArgumentException.class, () ->
-                DocumentValidator.validate("abc123", userPersistencePort));
+                DocumentValidator.validate("abc123", IUserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenDocumentLengthInvalid() {
         assertThrows(IllegalArgumentException.class, () ->
-                DocumentValidator.validate("1234567", userPersistencePort)); // < 8
+                DocumentValidator.validate("1234567", IUserPersistencePort)); // < 8
         assertThrows(IllegalArgumentException.class, () ->
-                DocumentValidator.validate("123456789012", userPersistencePort)); // > 11
+                DocumentValidator.validate("123456789012", IUserPersistencePort)); // > 11
     }
 
     @Test
     void validate_ShouldThrowException_WhenDocumentStartsWithZero() {
         assertThrows(IllegalArgumentException.class, () ->
-                DocumentValidator.validate("012345678", userPersistencePort));
+                DocumentValidator.validate("012345678", IUserPersistencePort));
     }
 
     @Test
     void validate_ShouldPass_WhenDocumentIsValidAndUnique() {
-        when(userPersistencePort.findByIdentityDocument("12345678")).thenReturn(Optional.empty());
+        when(IUserPersistencePort.findByIdentityDocument("12345678")).thenReturn(Optional.empty());
 
-        assertDoesNotThrow(() -> DocumentValidator.validate("12345678", userPersistencePort));
+        assertDoesNotThrow(() -> DocumentValidator.validate("12345678", IUserPersistencePort));
     }
 
     @Test

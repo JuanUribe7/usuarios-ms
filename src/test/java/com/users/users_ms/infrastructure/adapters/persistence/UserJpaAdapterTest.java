@@ -21,13 +21,13 @@ class UserJpaAdapterTest {
 
     private UserRepository UserRepository;
     private UserEntityMapper mapper;
-    private UserJpaAdapter adapter;
+    private IUserJpaAdapter adapter;
 
     @BeforeEach
     void setUp() {
         UserRepository = mock(UserRepository.class);
         mapper = mock(UserEntityMapper.class);
-        adapter = new UserJpaAdapter(UserRepository, mapper);
+        adapter = new IUserJpaAdapter(UserRepository, mapper);
     }
 
     @Test

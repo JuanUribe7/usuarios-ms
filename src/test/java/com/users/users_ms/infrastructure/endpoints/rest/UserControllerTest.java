@@ -3,59 +3,103 @@ package com.users.users_ms.infrastructure.endpoints.rest;
 import com.users.users_ms.application.dto.request.UserRequestDto;
 import com.users.users_ms.application.dto.response.UserResponseDto;
 import com.users.users_ms.application.mappers.UserDtoMapper;
-import com.users.users_ms.application.services.UserService;
+import com.users.users_ms.application.services.EmployeeServiceHandler;
+import com.users.users_ms.application.services.OwnerServiceHandler;
+import com.users.users_ms.domain.model.Role;
+import com.users.users_ms.infrastructure.security.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
-    @Mock
-    private UserService userService;
-
-    @Mock
+    private OwnerServiceHandler ownerServiceHandler;
+    private EmployeeServiceHandler employeeServiceHandler;
     private UserDtoMapper mapper;
-
-    @InjectMocks
+    private JwtUtil jwtUtil;
     private UserController userController;
 
-    @Test
-    void createOwner_ReturnsUserResponse() {
-        // Arrange
-        UserRequestDto dto = mock(UserRequestDto.class);
-        UserResponseDto expectedResponse = new UserResponseDto();
-        when(userService.saveOwner(dto)).thenReturn(expectedResponse);
-
-        // Act
-        ResponseEntity<UserResponseDto> response = userController.createOwner(dto);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertSame(expectedResponse, response.getBody());
-        verify(userService, times(1)).saveOwner(dto);
+    @BeforeEach
+    void setUp() {
+        ownerServiceHandler = mock(OwnerServiceHandler.class);
+        employeeServiceHandler = mock(EmployeeServiceHandler.class);
+        mapper = mock(UserDtoMapper.class);
+        jwtUtil = mock(JwtUtil.class);
+        userController = new UserController(ownerServiceHandler, employeeServiceHandler, mapper, jwtUtil);
     }
 
     @Test
-    void getUserRoleById_ReturnsRole() {
-        // Arrange
-        Long userId = 42L;
-        String expectedRole = "OWNER";
-        when(userService.getUserRoleById(userId)).thenReturn(expectedRole);
+    void createOwner_ShouldReturnUserResponseDto() {
+        UserRequestDto requestDto = new UserRequestDto();
+        UserResponseDto responseDto = new UserResponseDto();
+        when(ownerServiceHandler.saveOwner(requestDto)).thenReturn(responseDto);
 
-        // Act
+        ResponseEntity<UserResponseDto> response = userController.createOwner(requestDto);
+
+        assertEquals(responseDto, response.getBody());
+        verify(ownerServiceHandler).saveOwner(requestDto);
+    }
+
+    @Test
+    void createEmployee_ShouldExtractOwnerIdFromToken_AndReturnUserResponseDto() {
+        UserRequestDto requestDto = new UserRequestDto();
+        UserResponseDto responseDto = new UserResponseDto();
+        String token = "fake-jwt-token";
+        Long extractedOwnerId = 123L;
+
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        when(mockRequest.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(jwtUtil.extractUserId(token)).thenReturn(extractedOwnerId);
+        when(employeeServiceHandler.saveEmployee(requestDto, extractedOwnerId)).thenReturn(responseDto);
+
+        ResponseEntity<UserResponseDto> response = userController.createEmployee(requestDto, mockRequest);
+
+        assertEquals(responseDto, response.getBody());
+        verify(jwtUtil).extractUserId(token);
+        verify(employeeServiceHandler).saveEmployee(requestDto, extractedOwnerId);
+    }
+
+    @Test
+    void updateOwnerRestaurant_ShouldCallServiceHandler() {
+        Long ownerId = 1L;
+        Long restaurantId = 2L;
+
+        ResponseEntity<String> response = userController.updateOwnerRestaurant(ownerId, restaurantId);
+
+        assertEquals("Restaurante asignado correctamente al propietario.", response.getBody());
+        verify(ownerServiceHandler).updateOwnerRestaurantId(ownerId, restaurantId);
+    }
+
+    @Test
+    void getUserRoleById_ShouldReturnCorrectRole() {
+        Long userId = 1L;
+        String role = "OWNER";
+
+        when(ownerServiceHandler.getUserRoleById(userId)).thenReturn(role);
+
         ResponseEntity<String> response = userController.getUserRoleById(userId);
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedRole, response.getBody());
-        verify(userService, times(1)).getUserRoleById(userId);
+        assertEquals(role, response.getBody());
+        verify(ownerServiceHandler).getUserRoleById(userId);
     }
 }

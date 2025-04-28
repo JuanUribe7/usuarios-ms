@@ -1,4 +1,4 @@
-// src/test/java/com/users/users_ms/application/services/impl/UserServiceImplTest.java
+// src/test/java/com/users/users_ms/application/services/impl/OwnerServiceHandlerImplTest.java
 
 package com.users.users_ms.application.services.impl;
 
@@ -7,7 +7,7 @@ import com.users.users_ms.application.dto.response.UserResponseDto;
 import com.users.users_ms.application.mappers.UserDtoMapper;
 import com.users.users_ms.domain.model.Role;
 import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.ports.in.UserServicePort;
+import com.users.users_ms.domain.ports.in.IOwnerServicePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,17 +17,17 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class UserServiceImplTest {
+class OwnerServiceHandlerImplTest {
 
-    private UserServicePort userServicePort;
+    private IOwnerServicePort IOwnerServicePort;
     private UserDtoMapper mapper;
-    private UserServiceImpl userService;
+    private OwnerServiceHandlerImpl userService;
 
     @BeforeEach
     void setUp() {
-        userServicePort = mock(UserServicePort.class);
+        IOwnerServicePort = mock(IOwnerServicePort.class);
         mapper = mock(UserDtoMapper.class);
-        userService = new UserServiceImpl(userServicePort, mapper);
+        userService = new OwnerServiceHandlerImpl(IOwnerServicePort, mapper);
     }
 
     @Test
@@ -38,7 +38,7 @@ class UserServiceImplTest {
         UserResponseDto responseDto = new UserResponseDto();
 
         when(mapper.toModel(requestDto)).thenReturn(user);
-        when(userServicePort.saveOwner(user)).thenReturn(savedUser);
+        when(IOwnerServicePort.saveOwner(user)).thenReturn(savedUser);
         when(mapper.toResponseDto(savedUser)).thenReturn(responseDto);
 
         UserResponseDto result = userService.saveOwner(requestDto);
@@ -46,7 +46,7 @@ class UserServiceImplTest {
         assertNotNull(result);
         assertEquals(responseDto, result);
         verify(mapper).toModel(requestDto);
-        verify(userServicePort).saveOwner(user);
+        verify(IOwnerServicePort).saveOwner(user);
         verify(mapper).toResponseDto(savedUser);
     }
 
@@ -55,21 +55,21 @@ class UserServiceImplTest {
         User user = new User();
         user.setRole(Role.OWNER);
 
-        when(userServicePort.findById(1L)).thenReturn(Optional.of(user));
+        when(IOwnerServicePort.findById(1L)).thenReturn(Optional.of(user));
 
         String role = userService.getUserRoleById(1L);
 
         assertEquals("OWNER", role);
-        verify(userServicePort).findById(1L);
+        verify(IOwnerServicePort).findById(1L);
     }
 
     @Test
     void getUserRoleById_ShouldThrowException() {
-        when(userServicePort.findById(1L)).thenReturn(Optional.empty());
+        when(IOwnerServicePort.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> userService.getUserRoleById(1L));
 
         assertEquals("Usuario no encontrado", exception.getMessage());
-        verify(userServicePort).findById(1L);
+        verify(IOwnerServicePort).findById(1L);
     }
 }

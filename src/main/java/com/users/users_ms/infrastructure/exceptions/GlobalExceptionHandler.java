@@ -2,6 +2,7 @@ package com.users.users_ms.infrastructure.exceptions;
 
 
 import com.users.users_ms.domain.exceptions.*;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -15,6 +16,19 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<String> handleJwtException(JwtException ex) {
+        return new ResponseEntity<>("Token inválido: " + ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        if (ex.getMessage().contains("Usuario no encontrado")) {
+            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Error interno: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     // 1. Validaciones por anotaciones como @Email, @NotBlank, etc.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {

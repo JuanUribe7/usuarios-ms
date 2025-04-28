@@ -27,6 +27,8 @@ public class UserRequestDto {
     private String email;
     @Schema(description = "Contraseña segura", example = "ClaveSegura123!", required = true)
     private String password;
+    private Long restaurantId;
+
 
 
     public UserRequestDto() {
@@ -96,6 +98,12 @@ public class UserRequestDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    public Long getRestaurantId() {
+        return restaurantId;
+    }
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
 

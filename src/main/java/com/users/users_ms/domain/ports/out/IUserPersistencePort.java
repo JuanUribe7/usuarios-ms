@@ -5,7 +5,7 @@ import com.users.users_ms.domain.model.User;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserPersistencePort {
+public interface IUserPersistencePort {
     User saveUser(User user);
     List<User> findAll();
     Optional<User> findById(Long id);

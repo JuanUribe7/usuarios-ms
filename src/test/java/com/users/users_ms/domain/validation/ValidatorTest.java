@@ -4,7 +4,7 @@ package com.users.users_ms.domain.validation;
 
 
 import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.ports.out.IUserPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 
 class ValidatorTest {
     private User user;
-    private UserPersistencePort userPersistencePort;
+    private IUserPersistencePort IUserPersistencePort;
 
     @BeforeEach
     void setUp() {
@@ -32,9 +32,9 @@ class ValidatorTest {
         user.setPhone("+573001234567");
         user.setPassword("Password123!");
 
-        userPersistencePort = mock(UserPersistencePort.class);
-        when(userPersistencePort.findByIdentityDocument(anyString())).thenReturn(Optional.empty());
-        when(userPersistencePort.findByEmail(anyString())).thenReturn(Optional.empty());
+        IUserPersistencePort = mock(IUserPersistencePort.class);
+        when(IUserPersistencePort.findByIdentityDocument(anyString())).thenReturn(Optional.empty());
+        when(IUserPersistencePort.findByEmail(anyString())).thenReturn(Optional.empty());
     }
 
     @Test
@@ -46,11 +46,11 @@ class ValidatorTest {
              MockedStatic<PhoneValidator> phoneMock = mockStatic(PhoneValidator.class);
              MockedStatic<PassValidator> passMock = mockStatic(PassValidator.class)) {
 
-            Validator.validate(user, userPersistencePort);
+            Validator.validate(user, IUserPersistencePort);
 
             ageMock.verify(() -> AgeValidator.validate(user.getBirthDate()));
-            docMock.verify(() -> DocumentValidator.validate(user.getIdentityDocument(), userPersistencePort));
-            emailMock.verify(() -> EmailValidator.validate(user.getEmail(), userPersistencePort));
+            docMock.verify(() -> DocumentValidator.validate(user.getIdentityDocument(), IUserPersistencePort));
+            emailMock.verify(() -> EmailValidator.validate(user.getEmail(), IUserPersistencePort));
             nameMock.verify(() -> NameValidator.validate(user.getName()));
             nameMock.verify(() -> NameValidator.validate(user.getLastName()));
             phoneMock.verify(() -> PhoneValidator.validate(user.getPhone()));

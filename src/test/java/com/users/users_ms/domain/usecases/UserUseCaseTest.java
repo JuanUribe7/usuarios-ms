@@ -4,7 +4,7 @@ package com.users.users_ms.domain.usecases;
 
 import com.users.users_ms.domain.model.Role;
 import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.ports.out.IUserPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,15 +17,15 @@ import static org.mockito.Mockito.*;
 
 class UserUseCaseTest {
 
-    private UserPersistencePort userPersistencePort;
+    private IUserPersistencePort IUserPersistencePort;
     private PasswordEncoder passwordEncoder;
-    private UserUseCase userUseCase;
+    private OwnerUseCase userUseCase;
 
     @BeforeEach
     void setUp() {
-        userPersistencePort = mock(UserPersistencePort.class);
+        IUserPersistencePort = mock(IUserPersistencePort.class);
         passwordEncoder = mock(PasswordEncoder.class);
-        userUseCase = new UserUseCase(userPersistencePort, passwordEncoder);
+        userUseCase = new OwnerUseCase(IUserPersistencePort, passwordEncoder);
     }
 
 
@@ -41,13 +41,13 @@ class UserUseCaseTest {
         user.setLastName("Perez");
 
         when(passwordEncoder.encode("1042241877Ju@n")).thenReturn("encodedPassword"); // Coincide ahora
-        when(userPersistencePort.saveUser(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(IUserPersistencePort.saveUser(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         User savedUser = userUseCase.saveOwner(user);
 
         assertEquals(Role.OWNER, savedUser.getRole());
         assertEquals("encodedPassword", savedUser.getPassword());
-        verify(userPersistencePort).saveUser(savedUser);
+        verify(IUserPersistencePort).saveUser(savedUser);
     }
 
 
@@ -57,7 +57,7 @@ class UserUseCaseTest {
     void findById_ShouldReturnUserIfExists() {
         User user = new User();
         user.setId(1L);
-        when(userPersistencePort.findById(1L)).thenReturn(Optional.of(user));
+        when(IUserPersistencePort.findById(1L)).thenReturn(Optional.of(user));
 
         Optional<User> result = userUseCase.findById(1L);
 

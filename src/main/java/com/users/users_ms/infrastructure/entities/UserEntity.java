@@ -22,6 +22,7 @@ public class UserEntity {
     private LocalDate birthDate;
     private String email;
     private String password;
+    private Long restaurantId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -113,5 +114,12 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Long getRestaurantId() {
+        return restaurantId;
+    }
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
     }
 }

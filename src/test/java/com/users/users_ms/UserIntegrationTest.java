@@ -3,6 +3,7 @@ package com.users.users_ms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.users.users_ms.application.dto.request.UserRequestDto;
+import com.users.users_ms.application.services.OwnerServiceHandler;
 import com.users.users_ms.domain.exceptions.UnauthorizedException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -37,7 +38,7 @@ class UserIntegrationTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private com.users.users_ms.application.services.UserService userService;
+    private OwnerServiceHandler ownerServiceHandler;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -57,16 +58,16 @@ class UserIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /user/owner - éxito")
+    @DisplayName("POST /users/owner - éxito")
     void createOwner_Success() throws Exception {
         UserRequestDto dto = new UserRequestDto();
         dto.setName("Juan");
         dto.setLastName("Perez");
         dto.setEmail("juan@example.com");
         dto.setPassword("secret");
-        when(userService.saveOwner(dto)).thenReturn(null);
+        when(ownerServiceHandler.saveOwner(dto)).thenReturn(null);
 
-        mockMvc.perform(post("/user/owner")
+        mockMvc.perform(post("/users/owner")
                         .header("Authorization", "Bearer " + adminToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -74,11 +75,11 @@ class UserIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /user/owner - error de validación 400")
+    @DisplayName("POST /users/owner - error de validación 400")
     void createOwner_ValidationError() throws Exception {
         UserRequestDto dto = new UserRequestDto();
 
-        mockMvc.perform(post("/user/owner")
+        mockMvc.perform(post("/users/owner")
                         .header("Authorization", "Bearer " + adminToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -87,25 +88,25 @@ class UserIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /user/{id}/rol - éxito")
+    @DisplayName("GET /users/{id}/rol - éxito")
     void getUserRoleById_Success() throws Exception {
         Long userId = 1L;
-        when(userService.getUserRoleById(userId)).thenReturn("OWNER");
+        when(ownerServiceHandler.getUserRoleById(userId)).thenReturn("OWNER");
 
-        mockMvc.perform(get("/user/{id}/rol", userId)
+        mockMvc.perform(get("/users/{id}/rol", userId)
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value("OWNER"));
     }
 
     @Test
-    @DisplayName("GET /user/{id}/rol - no autorizado 401")
+    @DisplayName("GET /users/{id}/rol - no autorizado 401")
     void getUserRoleById_Unauthorized() throws Exception {
         Long userId = 2L;
         doThrow(new UnauthorizedException("No autorizado"))
-                .when(userService).getUserRoleById(userId);
+                .when(ownerServiceHandler).getUserRoleById(userId);
 
-        mockMvc.perform(get("/user/{id}/rol", userId)
+        mockMvc.perform(get("/users/{id}/rol", userId)
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error").value("No autorizado"));

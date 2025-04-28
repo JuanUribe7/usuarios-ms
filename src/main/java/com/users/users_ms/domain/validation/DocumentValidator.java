@@ -1,7 +1,7 @@
 package com.users.users_ms.domain.validation;
 
 import com.users.users_ms.domain.exceptions.InvalidIdentityDocumentException;
-import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.ports.out.IUserPersistencePort;
 
 public class DocumentValidator {
 
@@ -10,8 +10,8 @@ public class DocumentValidator {
     }
 
 
-    public static void validate(String document,UserPersistencePort userPersistencePort) {
-        if (userPersistencePort.findByIdentityDocument(document).isPresent()){
+    public static void validate(String document, IUserPersistencePort IUserPersistencePort) {
+        if (IUserPersistencePort.findByIdentityDocument(document).isPresent()){
             throw new InvalidIdentityDocumentException("El documento de identidad ya está registrado.");
         }
         if (document == null || document.trim().isEmpty()) {

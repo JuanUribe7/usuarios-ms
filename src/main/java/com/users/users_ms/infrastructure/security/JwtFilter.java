@@ -43,12 +43,14 @@ public class JwtFilter extends OncePerRequestFilter {
             User userDetails = new User(email, "",
                     java.util.Collections.singleton(() -> role));
 
+            // CORRECCIÓN: Propagar token como credentials
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
+                    userDetails, jwt, userDetails.getAuthorities());
 
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 
         filterChain.doFilter(request, response);
-    }    }
+    }
+}

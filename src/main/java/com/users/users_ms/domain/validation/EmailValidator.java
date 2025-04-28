@@ -1,6 +1,6 @@
 package com.users.users_ms.domain.validation;
 
-import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.ports.out.IUserPersistencePort;
 
 public class EmailValidator {
 
@@ -8,9 +8,9 @@ public class EmailValidator {
         throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
     }
 
-    public static void validate(String email, UserPersistencePort userPersistencePort) {
+    public static void validate(String email, IUserPersistencePort IUserPersistencePort) {
 
-        if (userPersistencePort.findByEmail(email).isPresent()) {
+        if (IUserPersistencePort.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email ya registrado");
         }
         if (email == null || email.trim().isEmpty()) {
