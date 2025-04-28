@@ -6,6 +6,7 @@ import com.users.users_ms.application.dto.response.UserResponseDto;
 import com.users.users_ms.application.mappers.UserDtoMapper;
 import com.users.users_ms.application.services.EmployeeServiceHandler;
 import com.users.users_ms.application.services.OwnerServiceHandler;
+import com.users.users_ms.application.services.impl.ClientServiceHandler;
 import com.users.users_ms.infrastructure.security.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,15 +25,18 @@ public class UserController {
 
     private final OwnerServiceHandler ownerServiceHandler;
     private final EmployeeServiceHandler employeeServiceHandler;
+    private final ClientServiceHandler clientServiceHandler;
     private final UserDtoMapper mapper;
     private final JwtUtil jwtUtil;
 
     public UserController(OwnerServiceHandler ownerServiceHandler,
                             EmployeeServiceHandler employeeServiceHandler,
+                            ClientServiceHandler clientServiceHandler,
                           @Qualifier("userDtoMapperImpl") UserDtoMapper mapper,
                           JwtUtil jwtUtil) {
         this.ownerServiceHandler = ownerServiceHandler;
         this.employeeServiceHandler = employeeServiceHandler;
+        this.clientServiceHandler = clientServiceHandler;
         this.mapper = mapper;
         this.jwtUtil = jwtUtil;
     }
@@ -62,6 +66,12 @@ public class UserController {
         return ResponseEntity.ok(employeeServiceHandler.saveEmployee(dto, ownerId));
     }
 
+    @PostMapping("/client")
+    public ResponseEntity<UserResponseDto> createClient(
+            @Valid @RequestBody UserRequestDto dto) {
+        return ResponseEntity.ok(clientServiceHandler.saveClient(dto));
+    }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{ownerId}/restaurant/{restaurantId}")
@@ -82,8 +92,7 @@ public class UserController {
         String role = ownerServiceHandler.getUserRoleById(id);
         return ResponseEntity.ok(role);
 
-
-
     }
+
 
 }

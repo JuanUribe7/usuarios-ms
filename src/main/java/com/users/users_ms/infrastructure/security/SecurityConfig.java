@@ -40,6 +40,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher("/auth/login")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/users/client")).permitAll() // Cliente acceso libre
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
@@ -51,6 +52,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
