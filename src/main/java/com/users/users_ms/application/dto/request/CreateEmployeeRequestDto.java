@@ -1,19 +1,15 @@
 package com.users.users_ms.application.dto.request;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-@Schema(description = "DTO para la creación de usuarios")
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequestDto {
-    @NotBlank(message = "El nombre no puede estar vacío")
+public class CreateEmployeeRequestDto {
     private String name;
     private String lastName;
     private String identityDocument;
@@ -21,5 +17,5 @@ public class UserRequestDto {
     private String password;
     private String phone;
     private LocalDate birthDate;
-    private Long roleId;
+    private Long restaurantId;
 }

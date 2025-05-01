@@ -1,19 +1,23 @@
 package com.users.users_ms.infrastructure.adapters.client;
 
-import com.users.users_ms.domain.ports.out.IRestaurantValidationPort;
+import com.users.users_ms.domain.model.Role;
+import com.users.users_ms.domain.ports.out.RestaurantFeignPort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RestaurantFeignAdapter implements IRestaurantValidationPort {
+public class RestaurantFeignAdapter implements RestaurantFeignPort {
 
-    private final RestaurantFeignClient restaurantFeignClient;
+    private final RestaurantFeignClient client;
 
-    public RestaurantFeignAdapter(RestaurantFeignClient restaurantFeignClient) {
-        this.restaurantFeignClient = restaurantFeignClient;
+    public RestaurantFeignAdapter(RestaurantFeignClient client) {
+        this.client = client;
     }
+
 
     @Override
-    public boolean isOwnerOfRestaurant(Long restaurantId, Long ownerId) {
-        return restaurantFeignClient.isOwnerOfRestaurant(restaurantId, ownerId);
+    public void assignEmployeeToRestaurant(Long restaurantId, Long employeeId) {
+        client.assignEmployee(restaurantId, employeeId);
     }
+
+
 }

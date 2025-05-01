@@ -4,8 +4,7 @@ import com.users.users_ms.application.dto.request.UserRequestDto;
 import com.users.users_ms.application.dto.response.UserResponseDto;
 
 
-public interface OwnerServiceHandler {
+public interface OwnerService {
     UserResponseDto saveOwner(UserRequestDto dto);
-    void updateOwnerRestaurantId(Long ownerId, Long restaurantId);
-    String getUserRoleById(Long id);
+    boolean existsAndIsOwner(Long id);
 }

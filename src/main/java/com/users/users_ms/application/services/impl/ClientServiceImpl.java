@@ -3,26 +3,27 @@ package com.users.users_ms.application.services.impl;
 import com.users.users_ms.application.dto.request.UserRequestDto;
 import com.users.users_ms.application.dto.response.UserResponseDto;
 import com.users.users_ms.application.mappers.UserDtoMapper;
+import com.users.users_ms.application.services.ClientService;
+import com.users.users_ms.domain.model.Role;
 import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.ports.in.IClientServicePort;
+import com.users.users_ms.domain.ports.in.RegisterClientServicePort;
 import org.springframework.stereotype.Service;
 
-
 @Service
-public class ClientServiceHandlerImpl implements ClientServiceHandler {
+public class ClientServiceImpl implements ClientService {
 
-    private final IClientServicePort clientServicePort;
-    private final UserDtoMapper mapper;
+    private final RegisterClientServicePort clientServicePort;
 
-    public ClientServiceHandlerImpl(IClientServicePort clientServicePort, UserDtoMapper mapper) {
+
+    public ClientServiceImpl(RegisterClientServicePort clientServicePort) {
         this.clientServicePort = clientServicePort;
-        this.mapper = mapper;
+
     }
 
     @Override
     public UserResponseDto saveClient(UserRequestDto dto) {
-        User client = mapper.toModel(dto);
+        User client = UserDtoMapper.toModel(dto);
         User response = clientServicePort.saveClient(client);
-        return mapper.toResponseDto(response);
+        return UserDtoMapper.toDto(response);
     }
 }

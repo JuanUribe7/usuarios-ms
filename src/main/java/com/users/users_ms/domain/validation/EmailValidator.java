@@ -1,42 +1,36 @@
 package com.users.users_ms.domain.validation;
 
-import com.users.users_ms.domain.ports.out.IUserPersistencePort;
+import com.users.users_ms.commons.constants.ExceptionMessages;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
 
 public class EmailValidator {
-
     private EmailValidator() {
-        throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
+        throw new UnsupportedOperationException("Utility class");
     }
 
-    public static void validate(String email, IUserPersistencePort IUserPersistencePort) {
-
-        if (IUserPersistencePort.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("Email ya registrado");
+    public static void validate(String email, UserPersistencePort port) {
+        if (port.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException(ExceptionMessages.EMAIL_ALREADY_REGISTERED);
         }
         if (email == null || email.trim().isEmpty()) {
-            throw new IllegalArgumentException("El correo electrónico no puede estar vacío");
+            throw new IllegalArgumentException(ExceptionMessages.EMAIL_EMPTY);
         }
-
         if (email.length() > 254) {
-            throw new IllegalArgumentException("El correo electrónico no puede superar los 254 caracteres");
+            throw new IllegalArgumentException(ExceptionMessages.EMAIL_TOO_LONG);
         }
-
         if (email.contains(" ")) {
-            throw new IllegalArgumentException("El correo electrónico no puede contener espacios");
+            throw new IllegalArgumentException(ExceptionMessages.EMAIL_SPACES);
         }
 
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         if (!email.matches(emailRegex)) {
-            throw new IllegalArgumentException("Formato de correo electrónico no válido");
-
+            throw new IllegalArgumentException(ExceptionMessages.EMAIL_INVALID_FORMAT);
         }
 
         String domain = email.substring(email.indexOf('@') + 1);
-        String[] domainParts = domain.split("\\.");
-
-        for (String part : domainParts) {
+        for (String part : domain.split("\\.")) {
             if (part.startsWith("-") || part.endsWith("-")) {
-                throw new IllegalArgumentException("El dominio del correo no puede comenzar ni terminar con '-'");
+                throw new IllegalArgumentException(ExceptionMessages.EMAIL_DOMAIN_INVALID);
             }
         }
     }

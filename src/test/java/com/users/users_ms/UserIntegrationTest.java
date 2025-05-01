@@ -3,7 +3,7 @@ package com.users.users_ms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.users.users_ms.application.dto.request.UserRequestDto;
-import com.users.users_ms.application.services.OwnerServiceHandler;
+import com.users.users_ms.application.services.OwnerService;
 import com.users.users_ms.domain.exceptions.UnauthorizedException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -38,7 +38,7 @@ class UserIntegrationTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private OwnerServiceHandler ownerServiceHandler;
+    private OwnerService ownerService;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -65,7 +65,7 @@ class UserIntegrationTest {
         dto.setLastName("Perez");
         dto.setEmail("juan@example.com");
         dto.setPassword("secret");
-        when(ownerServiceHandler.saveOwner(dto)).thenReturn(null);
+        when(ownerService.saveOwner(dto)).thenReturn(null);
 
         mockMvc.perform(post("/users/owner")
                         .header("Authorization", "Bearer " + adminToken)
@@ -91,7 +91,7 @@ class UserIntegrationTest {
     @DisplayName("GET /users/{id}/rol - éxito")
     void getUserRoleById_Success() throws Exception {
         Long userId = 1L;
-        when(ownerServiceHandler.getUserRoleById(userId)).thenReturn("OWNER");
+        when(ownerService.getUserRoleById(userId)).thenReturn("OWNER");
 
         mockMvc.perform(get("/users/{id}/rol", userId)
                         .header("Authorization", "Bearer " + adminToken))
@@ -104,7 +104,7 @@ class UserIntegrationTest {
     void getUserRoleById_Unauthorized() throws Exception {
         Long userId = 2L;
         doThrow(new UnauthorizedException("No autorizado"))
-                .when(ownerServiceHandler).getUserRoleById(userId);
+                .when(ownerService).getUserRoleById(userId);
 
         mockMvc.perform(get("/users/{id}/rol", userId)
                         .header("Authorization", "Bearer " + adminToken))

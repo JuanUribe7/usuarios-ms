@@ -1,12 +1,12 @@
 
 package com.users.users_ms.commons.configurations.beans;
 
-import com.users.users_ms.domain.ports.in.IEmployeeServicePort;
-import com.users.users_ms.domain.ports.in.IOwnerServicePort;
-import com.users.users_ms.domain.ports.out.IRestaurantValidationPort;
-import com.users.users_ms.domain.ports.out.IUserPersistencePort;
-import com.users.users_ms.domain.usecases.EmployeeUseCase;
-import com.users.users_ms.domain.usecases.OwnerUseCase;
+import com.users.users_ms.domain.ports.in.RegisterEmployeeServicePort;
+import com.users.users_ms.domain.ports.in.RegisterOwnerServicePort;
+import com.users.users_ms.domain.ports.out.RestaurantFeignPort;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.usecases.RegisterEmployeeUseCase;
+import com.users.users_ms.domain.usecases.RegisterOwnerUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,40 +29,40 @@ class BeanConfigurationTest {
 
     @Test
     void shouldInstantiateOwnerUseCaseWithDependencies() throws Exception {
-        IUserPersistencePort userRepository = mock(IUserPersistencePort.class);
-        IOwnerServicePort ownerServicePort = config.ownerServicePort(userRepository);
+        UserPersistencePort userRepository = mock(UserPersistencePort.class);
+        RegisterOwnerServicePort ownerServicePort = config.ownerServicePort(userRepository);
 
         assertNotNull(ownerServicePort, "El servicio de propietario no debería ser nulo");
-        assertTrue(ownerServicePort instanceof OwnerUseCase, "Debe instanciar OwnerUseCase");
+        assertTrue(ownerServicePort instanceof RegisterOwnerUseCase, "Debe instanciar RegisterOwnerUseCase");
 
-        Field repositoryField = OwnerUseCase.class.getDeclaredField("userPersistencePort");
+        Field repositoryField = RegisterOwnerUseCase.class.getDeclaredField("userPersistencePort");
         repositoryField.setAccessible(true);
         assertSame(userRepository, repositoryField.get(ownerServicePort), "El repositorio inyectado no coincide");
 
-        Field encoderField = OwnerUseCase.class.getDeclaredField("passwordEncoder");
+        Field encoderField = RegisterOwnerUseCase.class.getDeclaredField("passwordEncoder");
         encoderField.setAccessible(true);
         assertTrue(encoderField.get(ownerServicePort) instanceof BCryptPasswordEncoder, "Debe usar BCryptPasswordEncoder");
     }
 
     @Test
     void shouldInstantiateEmployeeUseCaseWithDependencies() throws Exception {
-        IRestaurantValidationPort validationPort = mock(IRestaurantValidationPort.class);
-        IUserPersistencePort userRepository = mock(IUserPersistencePort.class);
-        IEmployeeServicePort employeeServicePort = config.employeeServicePort(validationPort, userRepository);
+        RestaurantFeignPort validationPort = mock(RestaurantFeignPort.class);
+        UserPersistencePort userRepository = mock(UserPersistencePort.class);
+        RegisterEmployeeServicePort employeeServicePort = config.employeeServicePort(validationPort, userRepository);
 
         assertNotNull(employeeServicePort, "El servicio de empleado no debería ser nulo");
-        assertTrue(employeeServicePort instanceof EmployeeUseCase, "Debe instanciar EmployeeUseCase");
+        assertTrue(employeeServicePort instanceof RegisterEmployeeUseCase, "Debe instanciar RegisterEmployeeUseCase");
 
         Class<?> clazz = employeeServicePort.getClass();
         Field validationField = Arrays.stream(clazz.getDeclaredFields())
-                .filter(f -> f.getType().equals(IRestaurantValidationPort.class))
+                .filter(f -> f.getType().equals(RestaurantFeignPort.class))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchFieldException("Campo de validación de restaurante no encontrado"));
         validationField.setAccessible(true);
         assertSame(validationPort, validationField.get(employeeServicePort), "El puerto de validación inyectado no coincide");
 
         Field repositoryField = Arrays.stream(clazz.getDeclaredFields())
-                .filter(f -> f.getType().equals(IUserPersistencePort.class))
+                .filter(f -> f.getType().equals(UserPersistencePort.class))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchFieldException("Campo de persistencia de usuario no encontrado"));
         repositoryField.setAccessible(true);

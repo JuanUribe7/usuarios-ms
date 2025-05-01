@@ -1,40 +1,42 @@
 package com.users.users_ms.commons.configurations.beans;
 
 
-import com.users.users_ms.domain.ports.in.IClientServicePort;
-import com.users.users_ms.domain.ports.in.IEmployeeServicePort;
-import com.users.users_ms.domain.ports.in.IOwnerServicePort;
-import com.users.users_ms.domain.ports.out.IRestaurantValidationPort;
-import com.users.users_ms.domain.ports.out.IUserPersistencePort;
-import com.users.users_ms.domain.usecases.ClientUseCase;
-import com.users.users_ms.domain.usecases.EmployeeUseCase;
-import com.users.users_ms.domain.usecases.OwnerUseCase;
+import com.users.users_ms.domain.ports.in.*;
+import com.users.users_ms.domain.ports.out.AuthenticationPort;
+import com.users.users_ms.domain.ports.out.PasswordEncoderPort;
+import com.users.users_ms.domain.ports.out.RestaurantFeignPort;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.usecases.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @Configuration
 public class BeanConfiguration {
-
-    @Bean(name = "ownerServicePort")
-    public IOwnerServicePort ownerServicePort(IUserPersistencePort userPersistencePort) {
-        return new OwnerUseCase(userPersistencePort, customPasswordEncoder());
-    }
-
-    @Bean(name = "employeeServicePort")
-    public IEmployeeServicePort employeeServicePort(IRestaurantValidationPort restaurantValidationPort,
-                                                    IUserPersistencePort userPersistencePort) {
-        return new EmployeeUseCase(customPasswordEncoder(), restaurantValidationPort, userPersistencePort);
-    }
-    @Bean(name = "clientServicePort")
-    public IClientServicePort clientServicePort(IUserPersistencePort userPersistencePort) {
-        return new ClientUseCase(userPersistencePort, customPasswordEncoder());
+    @Bean
+    public RegisterClientServicePort registerClientUseCase(UserPersistencePort persistencePort,
+                                                           PasswordEncoderPort passwordEncoderPort) {
+        return new RegisterClientUseCase(persistencePort, passwordEncoderPort);
     }
 
     @Bean
-    public PasswordEncoder customPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    public ValidateServicePort validateUseCase(UserPersistencePort persistencePort) {
+        return new ValidateUseCase(persistencePort);
+    }
+
+    @Bean
+    public RegisterOwnerServicePort registerOwnerUseCase(UserPersistencePort persistencePort,
+                                                         PasswordEncoderPort passwordEncoderPort) {
+        return new RegisterOwnerUseCase(persistencePort, passwordEncoderPort);
+    }
+    @Bean
+    public RegisterEmployeeServicePort registerEmployeeUseCase(PasswordEncoderPort passwordEncoderPort,
+                                                               RestaurantFeignPort restaurantFeignPort,
+                                                               UserPersistencePort persistencePort) {
+        return new RegisterEmployeeUseCase(passwordEncoderPort, restaurantFeignPort, persistencePort);
+    }
+    @Bean
+    public LoginServicePort loginUseCase(AuthenticationPort authenticationPort){
+        return new LoginUseCase(authenticationPort);
     }
 }

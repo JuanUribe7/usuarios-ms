@@ -4,7 +4,7 @@ import com.users.users_ms.application.dto.request.UserRequestDto;
 import com.users.users_ms.application.dto.response.UserResponseDto;
 import com.users.users_ms.application.mappers.UserDtoMapper;
 import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.ports.in.IClientServicePort;
+import com.users.users_ms.domain.ports.in.RegisterClientServicePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -14,20 +14,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class ClientServiceHandlerImplTest {
+class ClientServiceImplTest {
 
     @Mock
-    private IClientServicePort clientServicePort;
+    private RegisterClientServicePort clientServicePort;
 
     @Mock
     private UserDtoMapper mapper;
 
-    private ClientServiceHandlerImpl handler;
+    private ClientServiceImpl handler;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        handler = new ClientServiceHandlerImpl(clientServicePort, mapper);
+        handler = new ClientServiceImpl(clientServicePort, mapper);
     }
 
     @Test

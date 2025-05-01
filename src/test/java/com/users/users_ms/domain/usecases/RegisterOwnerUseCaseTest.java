@@ -2,7 +2,7 @@ package com.users.users_ms.domain.usecases;
 
 import com.users.users_ms.domain.model.Role;
 import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.ports.out.IUserPersistencePort;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
 import com.users.users_ms.domain.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,17 +15,17 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class OwnerUseCaseTest {
+class RegisterOwnerUseCaseTest {
 
-    private IUserPersistencePort userPersistencePort;
+    private UserPersistencePort userPersistencePort;
     private PasswordEncoder passwordEncoder;
-    private OwnerUseCase ownerUseCase;
+    private RegisterOwnerUseCase registerOwnerUseCase;
 
     @BeforeEach
     void setUp() {
-        userPersistencePort = mock(IUserPersistencePort.class);
+        userPersistencePort = mock(UserPersistencePort.class);
         passwordEncoder = mock(PasswordEncoder.class);
-        ownerUseCase = new OwnerUseCase(userPersistencePort, passwordEncoder);
+        registerOwnerUseCase = new RegisterOwnerUseCase(userPersistencePort, passwordEncoder);
     }
 
     @Test
@@ -37,7 +37,7 @@ class OwnerUseCaseTest {
             when(passwordEncoder.encode("plainPassword")).thenReturn("encodedPassword");
             when(userPersistencePort.saveUser(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-            User saved = ownerUseCase.saveOwner(owner);
+            User saved = registerOwnerUseCase.saveOwner(owner);
 
             validatorMock.verify(() -> Validator.validate(owner, userPersistencePort));
             assertEquals(Role.OWNER, saved.getRole());
@@ -55,7 +55,7 @@ class OwnerUseCaseTest {
                     .thenThrow(new IllegalArgumentException("Validation failed"));
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-                ownerUseCase.saveOwner(owner);
+                registerOwnerUseCase.saveOwner(owner);
             });
 
             assertEquals("Validation failed", thrown.getMessage());
@@ -68,7 +68,7 @@ class OwnerUseCaseTest {
         User user = new User();
         when(userPersistencePort.findById(1L)).thenReturn(Optional.of(user));
 
-        Optional<User> result = ownerUseCase.findById(1L);
+        Optional<User> result = registerOwnerUseCase.findById(1L);
 
         assertTrue(result.isPresent());
         assertEquals(user, result.get());
@@ -81,7 +81,7 @@ class OwnerUseCaseTest {
 
         when(userPersistencePort.findById(1L)).thenReturn(Optional.of(owner));
 
-        ownerUseCase.updateOwnerRestaurantId(1L, 100L);
+        registerOwnerUseCase.updateOwnerRestaurantId(1L, 100L);
 
         assertEquals(100L, owner.getRestaurantId());
         verify(userPersistencePort).updateUser(owner);
@@ -92,7 +92,7 @@ class OwnerUseCaseTest {
         when(userPersistencePort.findById(1L)).thenReturn(Optional.empty());
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-            ownerUseCase.updateOwnerRestaurantId(1L, 100L);
+            registerOwnerUseCase.updateOwnerRestaurantId(1L, 100L);
         });
 
         assertEquals("Propietario no encontrado o no válido.", thrown.getMessage());
@@ -106,7 +106,7 @@ class OwnerUseCaseTest {
         when(userPersistencePort.findById(1L)).thenReturn(Optional.of(user));
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-            ownerUseCase.updateOwnerRestaurantId(1L, 100L);
+            registerOwnerUseCase.updateOwnerRestaurantId(1L, 100L);
         });
 
         assertEquals("Propietario no encontrado o no válido.", thrown.getMessage());

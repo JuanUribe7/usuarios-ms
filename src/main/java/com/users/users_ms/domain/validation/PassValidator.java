@@ -1,56 +1,33 @@
 package com.users.users_ms.domain.validation;
 
+import com.users.users_ms.commons.constants.ExceptionMessages;
 
 public class PassValidator {
-
     private PassValidator() {
-        throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
+        throw new UnsupportedOperationException("Utility class");
     }
 
-
-
-    public static void validate(String password){
+    public static void validate(String password) {
         if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("La clave no puede estar vacía");
+            throw new IllegalArgumentException(ExceptionMessages.PASSWORD_EMPTY);
         }
-
         if (password.length() < 8 || password.length() > 64) {
-            throw new IllegalArgumentException("La clave debe tener entre 8 y 64 caracteres");
-
+            throw new IllegalArgumentException(ExceptionMessages.PASSWORD_LENGTH);
         }
-
         if (Character.isWhitespace(password.charAt(0)) || Character.isWhitespace(password.charAt(password.length() - 1))) {
-            throw new IllegalArgumentException("La clave no puede tener espacios al inicio o al final");
-
-
+            throw new IllegalArgumentException(ExceptionMessages.PASSWORD_SPACES);
         }
-
         if (!password.matches(".*[A-Z].*")) {
-            throw new IllegalArgumentException("La clave debe contener al menos una letra mayúscula");
-
+            throw new IllegalArgumentException(ExceptionMessages.PASSWORD_MISSING_UPPERCASE);
         }
-
         if (!password.matches(".*[a-z].*")) {
-            throw new IllegalArgumentException("La clave debe contener al menos una letra minúscula");
-
+            throw new IllegalArgumentException(ExceptionMessages.PASSWORD_MISSING_LOWERCASE);
         }
-
         if (!password.matches(".*\\d.*")) {
-            throw new IllegalArgumentException("La clave debe contener al menos un número");
-
+            throw new IllegalArgumentException(ExceptionMessages.PASSWORD_MISSING_NUMBER);
         }
-
         if (!password.matches(".*[!@#$%^&*()_+\\-={}\\[\\]|;:'\",.<>/?].*")) {
-            throw new IllegalArgumentException("La clave debe contener al menos un carácter especial");
+            throw new IllegalArgumentException(ExceptionMessages.PASSWORD_MISSING_SYMBOL);
         }
-
     }
-
-
-
-
-
-
-
-
 }

@@ -5,8 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.domain.model.Role;
-import com.users.users_ms.domain.ports.out.IUserPersistencePort;
-import com.users.users_ms.domain.usecases.ClientUseCase;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
 import com.users.users_ms.domain.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,20 +14,20 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.MockedStatic;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-class ClientUseCaseTest {
+class RegisterClientUseCaseTest {
 
     @Mock
-    private IUserPersistencePort userPersistencePort;
+    private UserPersistencePort userPersistencePort;
 
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    private ClientUseCase clientUseCase;
+    private RegisterClientUseCase registerClientUseCase;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this); // Initialize @Mock fields
-        clientUseCase = new ClientUseCase(userPersistencePort, passwordEncoder); // Create the use case to test
+        registerClientUseCase = new RegisterClientUseCase(userPersistencePort, passwordEncoder); // Create the use case to test
     }
 
     @Test
@@ -45,7 +44,7 @@ class ClientUseCaseTest {
                     .thenAnswer(invocation -> invocation.getArgument(0)); // Return the passed-in user
 
             // Act
-            User savedClient = clientUseCase.saveClient(client);
+            User savedClient = registerClientUseCase.saveClient(client);
 
             // Assert
             validatorMock.verify(() -> Validator.validate(client, userPersistencePort)); // Validation was called
@@ -69,7 +68,7 @@ class ClientUseCaseTest {
             // Act & Assert
             IllegalArgumentException ex = assertThrows(
                     IllegalArgumentException.class,
-                    () -> clientUseCase.saveClient(client)
+                    () -> registerClientUseCase.saveClient(client)
             );
             assertEquals("validation failed", ex.getMessage()); // Exception message should match
         }

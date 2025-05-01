@@ -4,10 +4,9 @@ import com.users.users_ms.application.dto.request.LoginRequestDto;
 import com.users.users_ms.application.dto.response.LoginResponseDto;
 import com.users.users_ms.domain.model.Role;
 import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.ports.out.IUserPersistencePort;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
 import com.users.users_ms.infrastructure.security.JwtUtil;
 import com.users.users_ms.infrastructure.security.UserDetailsServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,7 +40,7 @@ class AuthControllerTest {
     private UserDetailsServiceImpl userDetailsService;
 
     @Mock
-    private IUserPersistencePort userPersistencePort;
+    private UserPersistencePort userPersistencePort;
 
     @InjectMocks
     private AuthController authController;

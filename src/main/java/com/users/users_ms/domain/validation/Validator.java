@@ -1,7 +1,7 @@
 package com.users.users_ms.domain.validation;
 
 import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.ports.out.IUserPersistencePort;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
 
 public class Validator {
 
@@ -9,16 +9,18 @@ public class Validator {
         throw new UnsupportedOperationException("Clase utilitaria, no debe instanciarse.");
     }
 
-
-    public static void validate(User user , IUserPersistencePort IUserPersistencePort) {
-        AgeValidator.validate(user.getBirthDate());
-        DocumentValidator.validate(user.getIdentityDocument(), IUserPersistencePort);
-        EmailValidator.validate(user.getEmail(), IUserPersistencePort);
+    public static void validate(User user, UserPersistencePort port) {
         NameValidator.validate(user.getName());
+        if (user.getLastName() != null && !user.getLastName().isEmpty()) {
+            NameValidator.validate(user.getLastName());
+        }
+        DocumentValidator.validate(user.getIdentityDocument());
+        EmailValidator.validate(user.getEmail(), port);
         PhoneValidator.validate(user.getPhone());
         PassValidator.validate(user.getPassword());
-        NameValidator.validate(user.getLastName());
+        AgeValidator.validate(user.getBirthDateAsLocalDate());
+    }
 
 
     }
-}
+

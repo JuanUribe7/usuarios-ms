@@ -3,7 +3,7 @@
 package com.users.users_ms.domain.validation;
 
 import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.ports.out.IUserPersistencePort;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,65 +14,65 @@ import static org.mockito.Mockito.*;
 
 class EmailValidatorTest {
 
-    private IUserPersistencePort IUserPersistencePort;
+    private UserPersistencePort UserPersistencePort;
 
     @BeforeEach
     void setUp() {
-        IUserPersistencePort = mock(IUserPersistencePort.class);
+        UserPersistencePort = mock(UserPersistencePort.class);
     }
 
     @Test
     void validate_ShouldThrowException_WhenEmailAlreadyExists() {
-        when(IUserPersistencePort.findByEmail("test@example.com")).thenReturn(Optional.of(new User()));
+        when(UserPersistencePort.findByEmail("test@example.com")).thenReturn(Optional.of(new User()));
 
         assertThrows(IllegalArgumentException.class, () ->
-                EmailValidator.validate("test@example.com", IUserPersistencePort));
+                EmailValidator.validate("test@example.com", UserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenEmailIsNull() {
         assertThrows(IllegalArgumentException.class, () ->
-                EmailValidator.validate(null, IUserPersistencePort));
+                EmailValidator.validate(null, UserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenEmailIsEmpty() {
         assertThrows(IllegalArgumentException.class, () ->
-                EmailValidator.validate("   ", IUserPersistencePort));
+                EmailValidator.validate("   ", UserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenEmailIsTooLong() {
         String longEmail = "a".repeat(245) + "@example.com";
         assertThrows(IllegalArgumentException.class, () ->
-                EmailValidator.validate(longEmail, IUserPersistencePort));
+                EmailValidator.validate(longEmail, UserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenEmailContainsSpaces() {
         assertThrows(IllegalArgumentException.class, () ->
-                EmailValidator.validate("test @example.com", IUserPersistencePort));
+                EmailValidator.validate("test @example.com", UserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenEmailFormatIsInvalid() {
         assertThrows(IllegalArgumentException.class, () ->
-                EmailValidator.validate("invalid-email", IUserPersistencePort));
+                EmailValidator.validate("invalid-email", UserPersistencePort));
     }
 
     @Test
     void validate_ShouldThrowException_WhenDomainStartsOrEndsWithHyphen() {
         assertThrows(IllegalArgumentException.class, () ->
-                EmailValidator.validate("test@-example.com", IUserPersistencePort));
+                EmailValidator.validate("test@-example.com", UserPersistencePort));
         assertThrows(IllegalArgumentException.class, () ->
-                EmailValidator.validate("test@example-.com", IUserPersistencePort));
+                EmailValidator.validate("test@example-.com", UserPersistencePort));
     }
 
     @Test
     void validate_ShouldPass_WhenEmailIsValidAndUnique() {
-        when(IUserPersistencePort.findByEmail("test@example.com")).thenReturn(Optional.empty());
+        when(UserPersistencePort.findByEmail("test@example.com")).thenReturn(Optional.empty());
 
-        assertDoesNotThrow(() -> EmailValidator.validate("test@example.com", IUserPersistencePort));
+        assertDoesNotThrow(() -> EmailValidator.validate("test@example.com", UserPersistencePort));
     }
 
     @Test
