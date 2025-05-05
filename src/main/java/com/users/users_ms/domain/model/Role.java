@@ -1,14 +1,15 @@
 package com.users.users_ms.domain.model;
 
-public enum Role {
-    ADMIN, OWNER, EMPLOYEE, CLIENT;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-    public static boolean isAllowed(String role) {
-        try {
-            Role.valueOf(role.toUpperCase());
-            return true;
-        } catch (IllegalArgumentException ex) {
-            return false;
-        }
-    }
+@Schema(description = "User roles in the system")
+public enum Role {
+    @Schema(description = "Administrator role")
+    ADMIN,
+    @Schema(description = "Owner role")
+    OWNER,
+    @Schema(description = "Employee role")
+    EMPLOYEE,
+    @Schema(description = "Client role")
+    CLIENT;
 }

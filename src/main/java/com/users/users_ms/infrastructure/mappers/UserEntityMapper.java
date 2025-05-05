@@ -1,28 +1,50 @@
 package com.users.users_ms.infrastructure.mappers;
 
+
+import com.users.users_ms.commons.constants.ExceptionMessages;
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.infrastructure.entities.UserEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
-import java.util.List;
+public class UserEntityMapper {
 
-@Mapper(componentModel = "spring")
-public interface UserEntityMapper {
+    private UserEntityMapper() {
+        throw new IllegalStateException(ExceptionMessages.UTILITY_CLASS_INSTANTIATION);
+    }
 
-    @Mapping(target = "password", source = "password")
-    @Mapping(target = "id",        source = "id")
-    @Mapping(target = "name",      source = "name")
-    @Mapping(target = "lastName",  source = "lastName")
-    @Mapping(target = "identityDocument", source = "identityDocument")
-    @Mapping(target = "phone",     source = "phone")
-    @Mapping(target = "birthDate", source = "birthDate")
-    @Mapping(target = "email",     source = "email")
-    @Mapping(target = "role",      source = "role")
-    User toModel(UserEntity entity);
+    public static UserEntity toEntity(User user) {
+        if (user == null) {
+            return null;
+        }
 
-    UserEntity toEntity(User model);
+        UserEntity entity = new UserEntity();
+        entity.setId(user.getId());
+        entity.setName(user.getName());
+        entity.setLastName(user.getLastName());
+        entity.setIdentityDocument(user.getIdentityDocument());
+        entity.setEmail(user.getEmail());
+        entity.setPassword(user.getPassword());
+        entity.setPhone(user.getPhone());
+        entity.setBirthDate(user.getBirthDate());
+        entity.setRole(user.getRole());
 
-    List<User> toModelList(List<UserEntity> entities);
+        return entity;
+    }
 
+    public static User toModel(UserEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return new User(
+                entity.getId(),
+                entity.getName(),
+                entity.getLastName(),
+                entity.getIdentityDocument(),
+                entity.getEmail(),
+                entity.getPassword(),
+                entity.getPhone(),
+                entity.getBirthDate(),
+                entity.getRole()
+        );
+    }
 }

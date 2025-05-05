@@ -2,116 +2,50 @@ package com.users.users_ms.infrastructure.entities;
 
 import com.users.users_ms.domain.model.Role;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "users")
-
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(name = "uq_user_email", columnNames = "email")
+})
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 50)
     private String name;
+
+    @Column( length = 50)
     private String lastName;
+
+    @Column(nullable = false, name = "identity_document", length = 15)
     private String identityDocument;
+
+    @Column(nullable = false, length = 13)
     private String phone;
+
+    @Column(nullable = false, name = "birth_date")
     private LocalDate birthDate;
+
+    @Column(nullable = false, length = 254, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private Role role;
 
 
-    public UserEntity() {
-    }
-
-    public UserEntity(Long id, String name, String lastName, String identityDocument, String phone, LocalDate birthDate, String email, String password, Role role) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
-        this.identityDocument = identityDocument;
-        this.phone = phone;
-        this.birthDate = birthDate;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getIdentityDocument() {
-        return identityDocument;
-    }
-
-    public void setIdentityDocument(String identityDocument) {
-        this.identityDocument = identityDocument;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
+
