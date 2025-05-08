@@ -19,4 +19,6 @@ public class ValidateUseCase implements ValidateServicePort {
                 .orElse(false);
     }
 
+
+
 }

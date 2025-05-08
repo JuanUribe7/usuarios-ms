@@ -3,12 +3,13 @@ package com.users.users_ms.application.mappers;
 import com.users.users_ms.application.dto.request.CreateEmployeeRequestDto;
 import com.users.users_ms.application.dto.request.UserRequestDto;
 import com.users.users_ms.application.dto.response.UserResponseDto;
+import com.users.users_ms.commons.constants.ExceptionMessages;
 import com.users.users_ms.domain.model.User;
 
 public class UserDtoMapper {
 
     private UserDtoMapper() {
-        throw new IllegalStateException("Utility class");
+        throw new IllegalStateException(ExceptionMessages.UTILITY_CLASS_INSTANTIATION);
     }
 
     public static User toModel(UserRequestDto dto) {

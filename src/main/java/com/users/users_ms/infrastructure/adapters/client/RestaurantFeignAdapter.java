@@ -7,17 +7,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class RestaurantFeignAdapter implements RestaurantFeignPort {
 
-    private final RestaurantFeignClient client;
+    private final RestaurantFeignClient restaurant;
 
     public RestaurantFeignAdapter(RestaurantFeignClient client) {
-        this.client = client;
+        this.restaurant = client;
     }
 
 
     @Override
     public void assignEmployeeToRestaurant(Long restaurantId, Long employeeId) {
-        client.assignEmployee(restaurantId, employeeId);
+        restaurant.assignEmployee(restaurantId, employeeId);
     }
+    @Override
+    public void validateRestaurantExists(Long restaurantId) {
+        restaurant.validateExists(restaurantId);
+    }
+
+
 
 
 }

@@ -1,11 +1,9 @@
 package com.users.users_ms.commons.constants;
 
 public class ExceptionMessages {
-
     private ExceptionMessages() {
-        throw new UnsupportedOperationException("Utility class");
+        throw new UnsupportedOperationException(UTILITY_CLASS_INSTANTIATION);
     }
-
     public static final String EMAIL_ALREADY_REGISTERED = "Email is already registered.";
 
     public static final String NAME_INVALID = "Name must contain only letters and spaces";
@@ -42,4 +40,8 @@ public class ExceptionMessages {
     public static final String BIRTHDATE_FUTURE = "Birth date cannot be in the future";
     public static final String BIRTHDATE_TOO_OLD = "Birth date cannot be before 1900";
     public static final String BIRTHDATE_NOT_ADULT = "User must be at least 18 years old";
+    public static final String UTILITY_CLASS_INSTANTIATION = "Utility class cannot be instantiated";
+    public static final String USER_NOT_FOUND = "User not found";
+    public static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
+    public static final String UNAUTHORIZED_ACCESS= "Not authorized to access this resource, please check your token";
 }

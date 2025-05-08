@@ -7,6 +7,8 @@ import com.users.users_ms.application.mappers.UserDtoMapper;
 import com.users.users_ms.application.services.EmployeeService;
 import com.users.users_ms.application.services.OwnerService;
 import com.users.users_ms.application.services.ClientService;
+import com.users.users_ms.commons.constants.EndpointPaths;
+import com.users.users_ms.commons.constants.RoleConstants;
 import com.users.users_ms.infrastructure.security.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "users", description = "Operaciones relacionadas con la gestión de usuarios")
+import java.util.List;
+
+@Tag(name = "Users", description = "Operations related to user registration")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
@@ -29,9 +33,7 @@ public class UserController {
     private final EmployeeService employeeService;
     private final ClientService clientService;
 
-    @Operation(summary = "Crear un nuevo usuario OWNER", description = "Crea un usuario con rol OWNER")
-    @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente")
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida")
+    @Operation(summary = "Register Owner", description = "Creates a new user with role OWNER")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/owner")
     public ResponseEntity<UserResponseDto> createOwner(
@@ -45,12 +47,17 @@ public class UserController {
             @Valid @RequestBody CreateEmployeeRequestDto dto) {
         return ResponseEntity.ok(employeeService.saveEmployee(dto));
     }
+    @GetMapping("/{id}/phone")
+    public ResponseEntity<String> getPhoneByUserId(@PathVariable Long id) {
+        return ResponseEntity.ok(clientService.getPhoneByUserId(id));
+    }
 
     @PostMapping("/client")
     public ResponseEntity<UserResponseDto> createClient(
             @Valid @RequestBody UserRequestDto dto) {
         return ResponseEntity.ok(clientService.saveClient(dto));
     }
+
 
     @Operation(summary = "Obtener rol de un usuario", description = "Retorna el rol del usuario por su ID")
     @ApiResponse(responseCode = "200", description = "Rol obtenido exitosamente")

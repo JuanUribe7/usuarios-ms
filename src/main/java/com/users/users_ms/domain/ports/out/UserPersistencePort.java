@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface UserPersistencePort {
     User saveUser(User user);
     void updateUser(User user);
-    Optional<User> findById(Long id);
     Optional<User> findByEmail(String email);
-    Optional<User> findByIdentityDocument(String identityDocument);
+    boolean existsByEmail(String email);
+    Optional<User> findById(Long id);
 }

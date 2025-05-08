@@ -1,8 +1,7 @@
 package com.users.users_ms.infrastructure.adapters.persistence;
 
 
-import com.users.users_ms.domain.exceptions.InvalidEmailException;
-import com.users.users_ms.domain.exceptions.InvalidIdentityDocumentException;
+
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.domain.ports.out.UserPersistencePort;
 import com.users.users_ms.infrastructure.entities.UserEntity;
@@ -43,16 +42,15 @@ public class UserJpaAdapter implements UserPersistencePort {
                 .map(UserEntityMapper::toModel);
     }
     @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+    @Override
     public  Optional<User> findById(Long id) {
         return userRepository
                 .findById(id)
                 .map(UserEntityMapper::toModel);
     }
 
-    @Override
-    public Optional<User> findByIdentityDocument(String identityDocument) {
-        return userRepository
-                .findByIdentityDocument(identityDocument)
-                .map(UserEntityMapper::toModel);
-    }
+
 }

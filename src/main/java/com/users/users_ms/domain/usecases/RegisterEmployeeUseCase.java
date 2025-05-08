@@ -22,8 +22,10 @@ public class RegisterEmployeeUseCase implements RegisterEmployeeServicePort {
 
     @Override
     public User saveEmployee(User employee, Long restaurantId) {
+        restaurantAssignment.validateRestaurantExists(restaurantId);
         User newEmployee=employee.createEmployee(userPersistencePort);
         String encodedPassword = passwordEncoder.encodePassword(newEmployee.getPassword());
+
         User userSaved=userPersistencePort.saveUser(newEmployee.withEncodedPassword(encodedPassword));
         restaurantAssignment.assignEmployeeToRestaurant(restaurantId, userSaved.getId());
         return userSaved;

@@ -2,10 +2,8 @@ package com.users.users_ms.domain.usecases;
 
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.domain.ports.in.RegisterOwnerServicePort;
-import com.users.users_ms.domain.ports.out.UserPersistencePort;
 import com.users.users_ms.domain.ports.out.PasswordEncoderPort;
-
-import java.util.Optional;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
 
 public class RegisterOwnerUseCase implements RegisterOwnerServicePort {
 
@@ -18,13 +16,10 @@ public class RegisterOwnerUseCase implements RegisterOwnerServicePort {
     }
 
     @Override
-    public User saveOwner(User owner) {
+    public User execute(User owner) {
         User newOwner=owner.createOwner(userPersistencePort);
         String encodedPassword = passwordEncoderPort.encodePassword(newOwner.getPassword());
         return userPersistencePort.saveUser(newOwner.withEncodedPassword(encodedPassword));
     }
-
-
-
 
 }

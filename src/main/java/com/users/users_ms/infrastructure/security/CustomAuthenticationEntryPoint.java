@@ -1,5 +1,6 @@
 package com.users.users_ms.infrastructure.security;
 
+import com.users.users_ms.commons.constants.ExceptionMessages;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
@@ -16,6 +17,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-        response.getWriter().write("{\"error\": \"No autorizado. Proporcione un token válido.\"}");
+        response.getWriter().write(ExceptionMessages.UNAUTHORIZED_ACCESS);
     }
 }

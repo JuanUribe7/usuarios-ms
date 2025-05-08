@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface RegisterOwnerServicePort {
 
-    User saveOwner(User user);
+    User execute(User user);
 
 }

@@ -1,112 +1,137 @@
 package com.users.users_ms.infrastructure.endpoints.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.users.users_ms.application.dto.request.CreateEmployeeRequestDto;
 import com.users.users_ms.application.dto.request.UserRequestDto;
 import com.users.users_ms.application.dto.response.UserResponseDto;
-import com.users.users_ms.application.mappers.UserDtoMapper;
-import com.users.users_ms.application.services.OwnerService;
 import com.users.users_ms.application.services.ClientService;
+import com.users.users_ms.application.services.EmployeeService;
+import com.users.users_ms.application.services.OwnerService;
+import com.users.users_ms.domain.model.Role;
 import com.users.users_ms.infrastructure.security.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import java.time.LocalDate;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
 class UserControllerTest {
 
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
     private OwnerService ownerService;
+
+    @MockBean
     private EmployeeService employeeService;
-    private ClientService clientService;
-    private UserDtoMapper mapper;
+
+    @MockBean
     private JwtUtil jwtUtil;
-    private UserController userController;
+
+    @MockBean
+    private ClientService clientService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private UserResponseDto mockResponse;
+    private final String FAKE_TOKEN = "fake-token";
 
     @BeforeEach
-    void setUp() {
-        ownerService = mock(OwnerService.class);
-        employeeService = mock(EmployeeService.class);
-        clientService = mock(ClientService.class);
-        mapper                = mock(UserDtoMapper.class);
-        jwtUtil               = mock(JwtUtil.class);
-
-        userController = new UserController(
-                ownerService,
-                employeeService,
-                clientService,
-                mapper,
-                jwtUtil
+    void setup() {
+        mockResponse = new UserResponseDto(
+                1L,
+                "Juan",
+                "Uribe",
+                "12345678",
+                "juan@example.com",
+                Role.OWNER
         );
+
+        // Simular extracción de datos del token
+        Mockito.when(jwtUtil.extractUserId(FAKE_TOKEN)).thenReturn(1L);
+        Mockito.when(jwtUtil.extractUsername(FAKE_TOKEN)).thenReturn("juan@example.com"); // <— clave
+        Mockito.when(jwtUtil.extractRole(FAKE_TOKEN)).thenReturn("OWNER");                 // default OWNER
     }
 
     @Test
-    void createOwner_ShouldReturnUserResponseDto() {
-        UserRequestDto requestDto = new UserRequestDto();
-        UserResponseDto responseDto = new UserResponseDto();
+    void createOwner_shouldReturnCreatedUser() throws Exception {
+        // Para este endpoint necesitamos rol ADMIN
+        Mockito.when(jwtUtil.extractRole(FAKE_TOKEN)).thenReturn("ADMIN");
+        Mockito.when(ownerService.saveOwner(any(UserRequestDto.class))).thenReturn(mockResponse);
 
-        when(ownerService.saveOwner(requestDto)).thenReturn(responseDto);
+        UserRequestDto dto = new UserRequestDto(
+                "Juan", "Uribe", "12345678", "juan@example.com",
+                "1042241877Ju@n", "3001234567", LocalDate.of(2000,1,1), 2L
+        );
 
-        ResponseEntity<UserResponseDto> response = userController.createOwner(requestDto);
-
-        assertEquals(responseDto, response.getBody());
-        verify(ownerService).saveOwner(requestDto);
+        mockMvc.perform(post("/users/owner")
+                        .header("Authorization", "Bearer " + FAKE_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.role").value("OWNER"));
     }
 
     @Test
-    void createEmployee_ShouldExtractOwnerIdFromToken_AndReturnUserResponseDto() {
-        UserRequestDto requestDto = new UserRequestDto();
-        UserResponseDto responseDto = new UserResponseDto();
-        String token = "fake-jwt-token";
-        Long extractedOwnerId = 123L;
+    void createClient_shouldReturnCreatedUser() throws Exception {
+        // Este endpoint es permitAll, con OWNER stub vale
+        Mockito.when(clientService.saveClient(any(UserRequestDto.class))).thenReturn(mockResponse);
 
-        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-        when(mockRequest.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(jwtUtil.extractUserId(token)).thenReturn(extractedOwnerId);
-        when(employeeService.saveEmployee(requestDto, extractedOwnerId))
-                .thenReturn(responseDto);
+        UserRequestDto dto = new UserRequestDto(
+                "Juan", "Uribe", "12345678", "juan@example.com",
+                "1042241877Ju@n", "3001234567", LocalDate.of(2000,1,1), 4L
+        );
 
-        ResponseEntity<UserResponseDto> response = userController.createEmployee(requestDto, mockRequest);
-
-        assertEquals(responseDto, response.getBody());
-        verify(jwtUtil).extractUserId(token);
-        verify(employeeService).saveEmployee(requestDto, extractedOwnerId);
+        mockMvc.perform(post("/users/client")
+                        .header("Authorization", "Bearer " + FAKE_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("juan@example.com"));
     }
 
     @Test
-    void createClient_ShouldReturnUserResponseDto() {
-        UserRequestDto requestDto = new UserRequestDto();
-        UserResponseDto responseDto = new UserResponseDto();
+    void createEmployee_shouldReturnCreatedUser() throws Exception {
+        // PreAuthorize("hasRole('OWNER')") → OWNER stub funciona
+        Mockito.when(employeeService.saveEmployee(any(CreateEmployeeRequestDto.class))).thenReturn(mockResponse);
 
-        when(clientService.saveClient(requestDto)).thenReturn(responseDto);
+        CreateEmployeeRequestDto dto = new CreateEmployeeRequestDto(
+                "Juan", "Uribe", "12345678", "juan@example.com",
+                "pass", "3001234567", LocalDate.of(2000,1,1), 99L
+        );
 
-        ResponseEntity<UserResponseDto> response = userController.createClient(requestDto);
-
-        assertEquals(responseDto, response.getBody());
-        verify(clientService).saveClient(requestDto);
+        mockMvc.perform(post("/users/employee")
+                        .header("Authorization", "Bearer " + FAKE_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.role").value("OWNER"));
     }
 
     @Test
-    void updateOwnerRestaurant_ShouldCallServiceHandler() {
-        Long ownerId = 1L;
-        Long restaurantId = 2L;
+    void existsAndIsOwner_shouldReturnBoolean() throws Exception {
+        // Este endpoint necesita ADMIN o adaptar el @PreAuthorize, aquí simulamos ADMIN
+        Mockito.when(jwtUtil.extractRole(FAKE_TOKEN)).thenReturn("ADMIN");
+        Mockito.when(ownerService.existsAndIsOwner(1L)).thenReturn(true);
 
-        ResponseEntity<String> response = userController.updateOwnerRestaurant(ownerId, restaurantId);
-
-        assertEquals("Restaurante asignado correctamente al propietario.", response.getBody());
-        verify(ownerService).updateOwnerRestaurantId(ownerId, restaurantId);
-    }
-
-    @Test
-    void getUserRoleById_ShouldReturnCorrectRole() {
-        Long userId = 1L;
-        String role = "OWNER";
-
-        when(ownerService.getUserRoleById(userId)).thenReturn(role);
-
-        ResponseEntity<String> response = userController.getUserRoleById(userId);
-
-        assertEquals(role, response.getBody());
-        verify(ownerService).getUserRoleById(userId);
+        mockMvc.perform(get("/users/1/exists")
+                        .header("Authorization", "Bearer " + FAKE_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
     }
 }

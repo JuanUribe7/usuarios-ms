@@ -84,17 +84,17 @@ public class User {
         );
     }
     public User createClient(UserPersistencePort port) {
-        Validator.validate(this, port);
+        MainValidator.validate(this, port);
         return new User(this.id, name, lastName, identityDocument, email, password, phone, birthDate, Role.CLIENT);
     }
 
     public User createOwner(UserPersistencePort port) {
-        Validator.validate(this, port);
+        MainValidator.validate(this, port);
         return new User(this.id, name, lastName, identityDocument, email, password, phone, birthDate, Role.OWNER);
     }
 
     public User createEmployee(UserPersistencePort port) {
-        Validator.validate(this, port);
+        MainValidator.validate(this, port);
         return new User(this.id, name, lastName, identityDocument, email, password, phone, birthDate, Role.EMPLOYEE);
     }
 

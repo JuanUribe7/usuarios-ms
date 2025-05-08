@@ -1,76 +1,49 @@
 package com.users.users_ms.domain.usecases;
 
+import com.users.users_ms.domain.model.User;
+import com.users.users_ms.domain.ports.out.PasswordEncoderPort;
+import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.users.users_ms.domain.model.User;
-import com.users.users_ms.domain.model.Role;
-import com.users.users_ms.domain.ports.out.UserPersistencePort;
-import com.users.users_ms.domain.validation.Validator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.MockedStatic;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 class RegisterClientUseCaseTest {
 
-    @Mock
-    private UserPersistencePort userPersistencePort;
-
-    @Mock
-    private PasswordEncoder passwordEncoder;
-
-    private RegisterClientUseCase registerClientUseCase;
+    private UserPersistencePort userPort;
+    private PasswordEncoderPort encoderPort;
+    private RegisterClientUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Initialize @Mock fields
-        registerClientUseCase = new RegisterClientUseCase(userPersistencePort, passwordEncoder); // Create the use case to test
+        userPort = mock(UserPersistencePort.class);
+        encoderPort = mock(PasswordEncoderPort.class);
+        useCase = new RegisterClientUseCase(userPort, encoderPort);
     }
 
     @Test
-    void shouldSaveClientSuccessfully() {
+    void saveClient_shouldCreateClientEncodePasswordAndSaveUser() {
         // Arrange
-        User client = new User();                           // Create a new User instance
-        client.setPassword("plainPassword");                // Set an initial plain password
+        User inputUser = mock(User.class);
+        User clientCreated = mock(User.class);
+        User clientWithEncodedPass = mock(User.class);
 
-        // Mock static Validator.validate so it does nothing
-        try (MockedStatic<Validator> validatorMock = mockStatic(Validator.class)) {
-            when(passwordEncoder.encode("plainPassword"))
-                    .thenReturn("encodedPassword");             // Stub encoding to return "encodedPassword"
-            when(userPersistencePort.saveUser(any(User.class)))
-                    .thenAnswer(invocation -> invocation.getArgument(0)); // Return the passed-in user
+        when(inputUser.createClient(userPort)).thenReturn(clientCreated);
+        when(clientCreated.getPassword()).thenReturn("12345");
+        when(encoderPort.encodePassword("12345")).thenReturn("encoded12345");
+        when(clientCreated.withEncodedPassword("encoded12345")).thenReturn(clientWithEncodedPass);
+        when(userPort.saveUser(clientWithEncodedPass)).thenReturn(clientWithEncodedPass);
 
-            // Act
-            User savedClient = registerClientUseCase.saveClient(client);
+        // Act
+        User result = useCase.saveClient(inputUser);
 
-            // Assert
-            validatorMock.verify(() -> Validator.validate(client, userPersistencePort)); // Validation was called
-            verify(passwordEncoder).encode("plainPassword");           // PasswordEncoder.encode was called
-            verify(userPersistencePort).saveUser(client);              // saveUser was called with our client
-            assertEquals(Role.CLIENT, savedClient.getRole());          // Role should be CLIENT
-            assertEquals("encodedPassword", savedClient.getPassword()); // Password should be updated
-        }
-    }
-
-    @Test
-    void shouldThrowWhenValidationFails() {
-        // Arrange
-        User client = new User(); // Create a new User
-
-        // Mock static Validator.validate to throw an exception
-        try (MockedStatic<Validator> validatorMock = mockStatic(Validator.class)) {
-            validatorMock.when(() -> Validator.validate(client, userPersistencePort))
-                    .thenThrow(new IllegalArgumentException("validation failed"));
-
-            // Act & Assert
-            IllegalArgumentException ex = assertThrows(
-                    IllegalArgumentException.class,
-                    () -> registerClientUseCase.saveClient(client)
-            );
-            assertEquals("validation failed", ex.getMessage()); // Exception message should match
-        }
+        // Assert
+        assertEquals(clientWithEncodedPass, result);
+        verify(inputUser).createClient(userPort);
+        verify(clientCreated).getPassword();
+        verify(encoderPort).encodePassword("12345");
+        verify(clientCreated).withEncodedPassword("encoded12345");
+        verify(userPort).saveUser(clientWithEncodedPass);
     }
 }

@@ -15,4 +15,11 @@ public interface RestaurantFeignClient {
             @PathVariable("restaurantId") Long restaurantId,
             @PathVariable("employeeId") Long employeeId
     );
+
+    @GetMapping("/restaurants/{restaurantId}/exists")
+    void validateExists(@PathVariable("restaurantId") Long restaurantId);
 }
+
+
+
+
