@@ -13,7 +13,7 @@ public class UniquenessValidator {
 
     public static void validate(Supplier<Boolean> existenceCheck, String fieldName, String value) {
         if (existenceCheck.get()) {
-            throw new AlreadyExistsException("Value already exists for " + fieldName + ": " + value);
+            throw new AlreadyExistsException(ExceptionMessages.VALUE_ALREADY_EXISTS + fieldName + ": " + value);
         }
     }
 }

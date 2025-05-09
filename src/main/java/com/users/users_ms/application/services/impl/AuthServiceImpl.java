@@ -4,6 +4,7 @@ import com.users.users_ms.application.dto.request.LoginRequestDto;
 import com.users.users_ms.application.dto.response.LoginResponseDto;
 import com.users.users_ms.application.services.AuthService;
 
+import com.users.users_ms.domain.model.LoginResponse;
 import com.users.users_ms.domain.ports.in.LoginServicePort;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponseDto login(LoginRequestDto dto) {
-        return loginServicePort.login(dto.getEmail(), dto.getPassword());
+        LoginResponse response = loginServicePort.login(dto.email(), dto.password());
+        return new LoginResponseDto(response.getToken(), response.getEmail(), response.getRole());
     }
 }

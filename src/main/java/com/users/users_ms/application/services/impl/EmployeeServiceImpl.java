@@ -24,7 +24,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public UserResponseDto saveEmployee(CreateEmployeeRequestDto dto) {
         User employee = UserDtoMapper.toModel(dto);
-        User response= employeeServicePort.saveEmployee(employee, dto.getRestaurantId());
+        User response= employeeServicePort.saveEmployee(employee, dto.restaurantId());
         return (UserDtoMapper.toDto(response));
     }
 }

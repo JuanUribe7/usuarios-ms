@@ -4,6 +4,7 @@ import com.users.users_ms.application.dto.request.UserRequestDto;
 import com.users.users_ms.application.dto.response.UserResponseDto;
 import com.users.users_ms.application.mappers.UserDtoMapper;
 import com.users.users_ms.application.services.ClientService;
+import com.users.users_ms.commons.constants.ExceptionMessages;
 import com.users.users_ms.commons.exceptions.NotFoundException;
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.domain.ports.in.RegisterClientServicePort;
@@ -32,6 +33,6 @@ public class ClientServiceImpl implements ClientService {
     public String getPhoneByUserId(Long id) {
         return port.findById(id)
                 .map(User::getPhone)
-                .orElseThrow(() -> new NotFoundException("User not found with ID: " + id));
+                .orElseThrow(() -> new NotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_ID));
     }
 }

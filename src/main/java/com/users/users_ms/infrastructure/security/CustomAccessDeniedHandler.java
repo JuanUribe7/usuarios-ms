@@ -1,5 +1,6 @@
 package com.users.users_ms.infrastructure.security;
 
+import com.users.users_ms.commons.constants.ExceptionMessages;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,6 +17,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
-        response.getWriter().write("{\"error\": \"Acceso denegado. No tienes permisos suficientes.\"}");
+        response.getWriter().write("{\"error\": \"" + ExceptionMessages.ACCESS_DENIED + "\"}");
     }
 }

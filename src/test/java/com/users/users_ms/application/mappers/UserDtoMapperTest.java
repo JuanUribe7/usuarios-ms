@@ -38,7 +38,7 @@ class UserDtoMapperTest {
                 birth, 2L
         );
 
-        User user = UserDtoMapper.toModel(dto);
+        User user = UserDtoMapper.INSTANCE.toModel(dto);
 
         assertNull(user.getId());
         assertEquals("Juan", user.getName());
@@ -60,7 +60,7 @@ class UserDtoMapperTest {
                 birth, 55L
         );
 
-        User user = UserDtoMapper.toModel(dto);
+        User user = UserDtoMapper.INSTANCE.toModel(dto);
 
         assertNull(user.getId());
         assertEquals("Ana", user.getName());

@@ -1,37 +1,59 @@
 package com.users.users_ms.domain.usecases;
 
-import com.users.users_ms.application.dto.response.LoginResponseDto;
+import com.users.users_ms.domain.model.LoginResponse;
 import com.users.users_ms.domain.ports.out.AuthenticationPort;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class LoginUseCaseTest {
 
+    private AuthenticationPort authenticationPort;
+    private LoginUseCase loginUseCase;
+
+    @BeforeEach
+    void setUp() {
+        authenticationPort = mock(AuthenticationPort.class);
+        loginUseCase = new LoginUseCase(authenticationPort);
+    }
+
     @Test
-    void login_shouldReturnLoginResponseDto() {
+    void login_shouldReturnLoginResponseWhenAuthenticationSucceeds() {
         // Arrange
-        String email = "juan@example.com";
-        String password = "1042241877Ju@n";
-        LoginResponseDto expectedResponse = new LoginResponseDto("mocked.jwt.token", email, "CLIENT");
+        String email = "test@example.com";
+        String password = "password123";
+        LoginResponse expectedResponse = new LoginResponse("token123", "userId123@gmail.com","NAME");
 
-        AuthenticationPort authenticationPort = Mockito.mock(AuthenticationPort.class);
-        LoginUseCase loginUseCase = new LoginUseCase(authenticationPort);
-
-        // Mocking the behavior of the AuthenticationPort
         when(authenticationPort.authenticate(email, password)).thenReturn(expectedResponse);
 
         // Act
-        LoginResponseDto actualResponse = loginUseCase.login(email, password);
+        LoginResponse actualResponse = loginUseCase.login(email, password);
 
         // Assert
-        assertEquals(expectedResponse.getToken(), actualResponse.getToken());
-        assertEquals(expectedResponse.getEmail(), actualResponse.getEmail());
-        assertEquals(expectedResponse.getRole(), actualResponse.getRole());
+        assertEquals(expectedResponse, actualResponse);
+        verify(authenticationPort).authenticate(email, password);
+    }
 
-        // Verifying that authenticate was called exactly once with the correct parameters
-        verify(authenticationPort, times(1)).authenticate(email, password);
+    @Test
+    void login_shouldThrowExceptionWhenEmailOrPasswordIsNull() {
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> loginUseCase.login(null, "password123"));
+        assertThrows(NullPointerException.class, () -> loginUseCase.login("test@example.com", null));
+    }
+
+    @Test
+    void login_shouldThrowExceptionWhenAuthenticationFails() {
+        // Arrange
+        String email = "test@example.com";
+        String password = "wrongPassword";
+
+        when(authenticationPort.authenticate(email, password)).thenThrow(new RuntimeException("Authentication failed"));
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> loginUseCase.login(email, password));
+        assertEquals("Authentication failed", exception.getMessage());
+        verify(authenticationPort).authenticate(email, password);
     }
 }

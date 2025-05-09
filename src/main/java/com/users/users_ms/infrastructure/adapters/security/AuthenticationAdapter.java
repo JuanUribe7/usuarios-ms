@@ -1,6 +1,7 @@
 package com.users.users_ms.infrastructure.adapters.security;
 
 import com.users.users_ms.application.dto.response.LoginResponseDto;
+import com.users.users_ms.domain.model.LoginResponse;
 import com.users.users_ms.domain.ports.out.AuthenticationPort;
 import com.users.users_ms.infrastructure.entities.UserEntity;
 import com.users.users_ms.infrastructure.repositories.UserRepository;
@@ -22,11 +23,11 @@ public class AuthenticationAdapter implements AuthenticationPort {
 
 
     @Override
-    public LoginResponseDto authenticate(String email, String password) {
+    public LoginResponse authenticate(String email, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         UserEntity user = userRepository.findByEmail(email).orElseThrow();
         final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         final String jwt = jwtUtil.generateToken(userDetails, user.getId(), user.getRole().name());
-         return new LoginResponseDto(jwt, user.getEmail(), user.getRole().name());
+         return new LoginResponse(jwt, user.getEmail(), user.getRole().name());
     }
 }

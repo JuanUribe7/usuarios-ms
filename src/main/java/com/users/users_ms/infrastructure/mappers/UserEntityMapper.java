@@ -1,16 +1,17 @@
 package com.users.users_ms.infrastructure.mappers;
 
 
-import com.users.users_ms.domain.model.Role;
+import com.users.users_ms.commons.constants.ExceptionMessages;
+
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.infrastructure.entities.UserEntity;
 
-import java.time.LocalDate;
+
 
 public class UserEntityMapper {
 
     private UserEntityMapper() {
-        throw new IllegalStateException("Utility class");
+        throw new IllegalStateException(ExceptionMessages.UTILITY_CLASS_INSTANTIATION);
     }
 
     public static UserEntity toEntity(User user) {

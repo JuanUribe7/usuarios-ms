@@ -1,5 +1,6 @@
 package com.users.users_ms.infrastructure.security;
 
+import com.users.users_ms.commons.constants.ExceptionMessages;
 import com.users.users_ms.domain.model.User;
 
 
@@ -22,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = UserPersistencePort.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessages.USER_NOT_FOUND));
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(), user.getPassword(),
                 Collections.singleton(new SimpleGrantedAuthority(user.getRole().name()))

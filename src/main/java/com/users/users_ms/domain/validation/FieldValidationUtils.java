@@ -47,6 +47,9 @@ public class FieldValidationUtils {
 
     public static void validatePhone(String phone) {
         EmptyValidator.requireNonEmpty(phone, ExceptionMessages.PHONE_EMPTY);
+        if (!phone.startsWith("+")) {
+            throw new InvalidFieldException(ExceptionMessages.PHONE_PLUS_ERROR);
+        }
         if (phone.indexOf('+') > 0 || phone.chars().filter(ch -> ch == '+').count() > 1) {
             throw new InvalidFieldException(ExceptionMessages.PHONE_PLUS_ERROR);
         }
