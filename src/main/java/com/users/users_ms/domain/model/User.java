@@ -18,24 +18,27 @@ public class User {
     private final LocalDate birthDate;
     private final Role role;
 
-    private User(Builder builder) {
+    public User(Long id, String name, String lastName, String identityDocument, String email, String password, String phone, LocalDate
+            birthDate, Role role) {
+        validateName(name);
+        if(lastName != null && !lastName.isEmpty()){
+            validateLastName(lastName);
+        }
+        validateIdentityDocument(identityDocument);
+        validateEmail(email);
+        validatePassword(password);
+        validatePhone(phone);
+        validateBirthDate(birthDate);
 
-        validateName(builder.name);
-        validateLastName(builder.lastName);
-        validateIdentityDocument(builder.identityDocument);
-        validateEmail(builder.email);
-        validatePassword(builder.password);
-        validatePhone(builder.phone);
-        validateBirthDate(builder.birthDate);
-        this.id = builder.id;
-        this.name = builder.name;
-        this.lastName = builder.lastName;
-        this.identityDocument = builder.identityDocument;
-        this.email = builder.email;
-        this.password = builder.password;
-        this.phone = builder.phone;
-        this.birthDate = builder.birthDate;
-        this.role = builder.role;
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.identityDocument = identityDocument;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.birthDate = birthDate;
+        this.role = role;
     }
 
     public Long getId() {
@@ -74,97 +77,40 @@ public class User {
         return role;
     }
 
-    public static class Builder {
-        private Long id;
-        private String name;
-        private String lastName;
-        private String identityDocument;
-        private String email;
-        private String password;
-        private String phone;
-        private LocalDate birthDate;
-        private Role role;
 
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder lastName(String lastName) {
-            this.lastName = lastName;
-            return this;
-        }
-
-        public Builder identityDocument(String identityDocument) {
-            this.identityDocument = identityDocument;
-            return this;
-        }
-
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public Builder password(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public Builder phone(String phone) {
-            this.phone = phone;
-            return this;
-        }
-
-        public Builder birthDate(LocalDate birthDate) {
-            this.birthDate = birthDate;
-            return this;
-        }
-
-        public Builder role(Role role) {
-            this.role = role;
-            return this;
-        }
-
-        public User build() {
-            return new User(this);
-        }
-    }
 
     public boolean isAdult() {
         return Period.between(this.birthDate, LocalDate.now()).getYears() >= 18;
     }
 
-    public User withEncodedPassword(String encodedPassword) {
-        return new Builder()
-                .id(this.id)
-                .name(this.name)
-                .lastName(this.lastName)
-                .identityDocument(this.identityDocument)
-                .email(this.email)
-                .password(encodedPassword)
-                .phone(this.phone)
-                .birthDate(this.birthDate)
-                .role(this.role)
-                .build();
-    }
 
+
+    public User withEncodedPassword(String encodedPassword) {
+        return new User(
+                this.id,
+                this.name,
+                this.lastName,
+                this.identityDocument,
+                this.email,
+                encodedPassword,
+                this.phone,
+                this.birthDate,
+                this.role
+        );
+    }
     public User asRole(Role role) {
-        return new Builder()
-                .id(this.id)
-                .name(this.name)
-                .lastName(this.lastName)
-                .identityDocument(this.identityDocument)
-                .email(this.email)
-                .password(this.password)
-                .phone(this.phone)
-                .birthDate(this.birthDate)
-                .role(role)
-                .build();
+        return new User(
+
+                this.id,
+                this.name,
+                this.lastName,
+                this.identityDocument,
+                this.email,
+                this.password,
+                this.phone,
+                this.birthDate,
+                role
+        );
     }
 
     private void validateName(String name) {

@@ -20,33 +20,28 @@ public record CreateEmployeeRequestDto(
         @Schema(description = "Employee's last name", example = "Smith")
         String lastName,
 
-        @NotBlank(message = ValidationMessages.IDENTITY_DOCUMENT_NOT_BLANK)
-        @Pattern(regexp = "\\d+", message = ValidationMessages.IDENTITY_DOCUMENT_NUMERIC)
+
         @Schema(description = "Employee's identity document", example = "987654321")
         String identityDocument,
 
-        @NotBlank(message = ValidationMessages.EMAIL_NOT_BLANK)
-        @Email(message = ValidationMessages.EMAIL_VALID_FORMAT)
+
         @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = ValidationMessages.EMAIL_VALID_FORMAT)
         @Schema(description = "Employee's email", example = "employee@example.com")
         String email,
 
-        @NotBlank(message = ValidationMessages.PASSWORD_NOT_BLANK)
-        @Size(min = 8, message = ValidationMessages.PASSWORD_MIN_SIZE)
+
         @Schema(description = "Employee's password", example = "securePassword123")
         String password,
 
-        @NotBlank(message = ValidationMessages.PHONE_NOT_BLANK)
-        @Pattern(regexp = "(\\+\\d{1,12}|\\d{1,12})", message = ValidationMessages.PHONE_VALID_FORMAT)
+
         @Schema(description = "Employee's phone number", example = "+573005698325")
         String phone,
 
-        @NotNull(message = ValidationMessages.BIRTH_DATE_NOT_NULL)
-        @Past(message = ValidationMessages.BIRTH_DATE_PAST)
+
         @Schema(description = "Employee's birth date", example = "1995-05-15")
         LocalDate birthDate,
 
-        @NotNull(message = ValidationMessages.RESTAURANT_ID_NOT_NULL)
+
         @Schema(description = "Restaurant ID where the employee works", example = "1")
         Long restaurantId
 ) {}
