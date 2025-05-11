@@ -14,15 +14,15 @@ import java.util.Collections;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserPersistencePort UserPersistencePort;
+    private final UserPersistencePort userPersistencePort;
 
-    public UserDetailsServiceImpl(UserPersistencePort UserPersistencePort) {
-        this.UserPersistencePort = UserPersistencePort;
+    public UserDetailsServiceImpl(UserPersistencePort userPersistencePort) {
+        this.userPersistencePort = userPersistencePort;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = UserPersistencePort.findByEmail(email)
+        User user = userPersistencePort.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessages.USER_NOT_FOUND));
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(), user.getPassword(),

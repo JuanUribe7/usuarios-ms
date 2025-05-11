@@ -1,7 +1,6 @@
 package com.users.users_ms.application.services.impl;
 
-import com.users.users_ms.application.dto.request.UserRequestDto;
-import com.users.users_ms.application.dto.response.UserResponseDto;
+import com.users.users_ms.application.dto.request.CreateClientRequestDto;
 import com.users.users_ms.application.mappers.UserDtoMapper;
 import com.users.users_ms.application.services.ClientService;
 import com.users.users_ms.commons.constants.ExceptionMessages;
@@ -18,15 +17,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClientServiceImpl implements ClientService {
 
-    private final RegisterClientServicePort clientServicePort;
+    private final RegisterClientServicePort registerClient;
     private final UserPersistencePort port;
+    private final UserDtoMapper mapper;
 
 
     @Override
-    public UserResponseDto saveClient(UserRequestDto dto) {
-        User client = UserDtoMapper.toModel(dto);
-        User response = clientServicePort.saveClient(client);
-        return UserDtoMapper.toDto(response);
+    public void saveClient(CreateClientRequestDto dto) {
+        User client = mapper.toModel(dto);
+        registerClient.saveClient(client);
+
     }
 
     @Override

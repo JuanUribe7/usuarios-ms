@@ -1,8 +1,7 @@
 package com.users.users_ms.application.services.impl;
 
 import com.users.users_ms.application.dto.request.CreateEmployeeRequestDto;
-import com.users.users_ms.application.dto.request.UserRequestDto;
-import com.users.users_ms.application.dto.response.UserResponseDto;
+
 import com.users.users_ms.application.mappers.UserDtoMapper;
 import com.users.users_ms.application.services.EmployeeService;
 import com.users.users_ms.domain.model.User;
@@ -16,15 +15,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final RegisterEmployeeServicePort employeeServicePort;
-
-
+    private final RegisterEmployeeServicePort registerEmployee;
+    private final UserDtoMapper mapper;
 
 
     @Override
-    public UserResponseDto saveEmployee(CreateEmployeeRequestDto dto) {
-        User employee = UserDtoMapper.toModel(dto);
-        User response= employeeServicePort.saveEmployee(employee, dto.restaurantId());
-        return (UserDtoMapper.toDto(response));
+    public void saveEmployee(CreateEmployeeRequestDto dto) {
+        User employee = mapper.toModel(dto);
+        registerEmployee.saveEmployee(employee, dto.restaurantId());
     }
 }

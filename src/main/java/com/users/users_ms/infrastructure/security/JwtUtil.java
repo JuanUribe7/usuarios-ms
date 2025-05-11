@@ -18,10 +18,10 @@ public class JwtUtil {
 
 
     @Value("${jwt.secret-key}")
-    private String SECRET_KEY;
+    private String secretKey;
 
     private Key getSignKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String extractUsername(String token) {

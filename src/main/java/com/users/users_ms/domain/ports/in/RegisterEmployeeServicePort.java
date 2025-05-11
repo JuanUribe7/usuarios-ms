@@ -4,5 +4,5 @@ import com.users.users_ms.domain.model.User;
 
 public interface RegisterEmployeeServicePort {
 
-    User saveEmployee( User employee, Long restaurantId);
+    void saveEmployee( User employee, Long restaurantId);
 }

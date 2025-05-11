@@ -39,8 +39,6 @@ public class UserEntityMapper {
             return null;
         }
 
-
-
         return new User(
                 entity.getId(),
                 entity.getName(),

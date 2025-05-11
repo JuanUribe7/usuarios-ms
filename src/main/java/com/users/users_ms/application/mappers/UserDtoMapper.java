@@ -1,52 +1,22 @@
 package com.users.users_ms.application.mappers;
 
-import com.users.users_ms.application.dto.request.CreateEmployeeRequestDto;
-import com.users.users_ms.application.dto.request.UserRequestDto;
-import com.users.users_ms.application.dto.response.UserResponseDto;
-import com.users.users_ms.commons.constants.ExceptionMessages;
+import com.users.users_ms.application.dto.request.*;
+
 import com.users.users_ms.domain.model.User;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-public class UserDtoMapper {
+@Mapper(componentModel = "spring")
+public interface UserDtoMapper {
 
-    private UserDtoMapper() {
-        throw new IllegalStateException(ExceptionMessages.UTILITY_CLASS_INSTANTIATION);
-    }
 
-    public static User toModel(UserRequestDto dto) {
-        return new User(
-                null,
-                dto.getName(),
-                dto.getLastName(),
-                dto.getIdentityDocument(),
-                dto.getEmail(),
-                dto.getPassword(),
-                dto.getPhone(),
-                dto.getBirthDate(),
-                null
-        );
-    }
-    public static User toModel(CreateEmployeeRequestDto dto) {
-        return new User(
-                null,
-                dto.getName(),
-                dto.getLastName(),
-                dto.getIdentityDocument(),
-                dto.getEmail(),
-                dto.getPassword(),
-                dto.getPhone(),
-                dto.getBirthDate(),
-                null
-        );
-    }
+    @Mapping(target = "role", constant = "OWNER")
+    User toModel(CreateOwnerRequestDto dto);
 
-    public static UserResponseDto toDto(User user) {
-        return new UserResponseDto(
-                user.getId(),
-                user.getName(),
-                user.getLastName(),
-                user.getIdentityDocument(),
-                user.getEmail(),
-                user.getRole()
-        );
-    }
+    @Mapping(target = "role", constant = "EMPLOYEE")
+    User toModel(CreateEmployeeRequestDto dto);
+
+    @Mapping(target = "role", constant = "CLIENT")
+    User toModel(CreateClientRequestDto dto);
+
 }

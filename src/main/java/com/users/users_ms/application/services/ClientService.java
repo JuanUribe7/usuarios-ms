@@ -1,10 +1,9 @@
 package com.users.users_ms.application.services;
 
-import com.users.users_ms.application.dto.request.UserRequestDto;
-import com.users.users_ms.application.dto.response.UserResponseDto;
+import com.users.users_ms.application.dto.request.CreateClientRequestDto;
 
 public interface ClientService {
-    UserResponseDto saveClient(UserRequestDto dto);
+    void saveClient(CreateClientRequestDto dto);
 
     String getPhoneByUserId(Long id);
 }

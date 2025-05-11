@@ -1,27 +1,21 @@
 package com.users.users_ms.infrastructure.endpoints.rest;
 
+import com.users.users_ms.application.dto.request.CreateClientRequestDto;
 import com.users.users_ms.application.dto.request.CreateEmployeeRequestDto;
-import com.users.users_ms.application.dto.request.UserRequestDto;
-import com.users.users_ms.application.dto.response.UserResponseDto;
-import com.users.users_ms.application.mappers.UserDtoMapper;
+import com.users.users_ms.application.dto.request.CreateOwnerRequestDto;
 import com.users.users_ms.application.services.EmployeeService;
 import com.users.users_ms.application.services.OwnerService;
 import com.users.users_ms.application.services.ClientService;
-import com.users.users_ms.commons.constants.EndpointPaths;
-import com.users.users_ms.commons.constants.RoleConstants;
-import com.users.users_ms.infrastructure.security.JwtUtil;
+import com.users.users_ms.commons.constants.ResponseMessages;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Users", description = "Operations related to user registration")
 @RequiredArgsConstructor
@@ -36,26 +30,32 @@ public class UserController {
     @Operation(summary = "Register Owner", description = "Creates a new user with role OWNER")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/owner")
-    public ResponseEntity<UserResponseDto> createOwner(
-            @Valid @RequestBody UserRequestDto dto) {
-        return  ResponseEntity.ok(ownerService.saveOwner(dto));
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createOwner(
+            @Valid @RequestBody CreateOwnerRequestDto dto)
+             {
+        ownerService.saveOwner(dto);
+        return ResponseMessages.OWNER_CREATED;
     }
 
+    @Operation(summary = "Register Employee", description = "Creates a new user with role EMPLOYEE")
     @PreAuthorize("hasRole('OWNER')")
     @PostMapping("/employee")
-    public ResponseEntity<UserResponseDto> createEmployee(
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createEmployee(
             @Valid @RequestBody CreateEmployeeRequestDto dto) {
-        return ResponseEntity.ok(employeeService.saveEmployee(dto));
-    }
-    @GetMapping("/{id}/phone")
-    public ResponseEntity<String> getPhoneByUserId(@PathVariable Long id) {
-        return ResponseEntity.ok(clientService.getPhoneByUserId(id));
+        employeeService.saveEmployee(dto);
+        return ResponseMessages.EMPLOYEE_CREATED;
     }
 
+    @Operation(summary = "Register Client", description = "Creates a new user with role CLIENT")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/client")
-    public ResponseEntity<UserResponseDto> createClient(
-            @Valid @RequestBody UserRequestDto dto) {
-        return ResponseEntity.ok(clientService.saveClient(dto));
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createClient(
+            @Valid @RequestBody CreateClientRequestDto dto) {
+        clientService.saveClient(dto);
+        return ResponseMessages.CLIENT_CREATED;
     }
 
 
