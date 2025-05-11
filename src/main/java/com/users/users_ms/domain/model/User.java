@@ -1,5 +1,8 @@
 package com.users.users_ms.domain.model;
 
+import com.users.users_ms.commons.constants.ValidationMessages;
+import com.users.users_ms.domain.helper.FieldValidator;
+
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -16,6 +19,14 @@ public class User {
     private final Role role;
 
     private User(Builder builder) {
+
+        validateName(builder.name);
+        validateLastName(builder.lastName);
+        validateIdentityDocument(builder.identityDocument);
+        validateEmail(builder.email);
+        validatePassword(builder.password);
+        validatePhone(builder.phone);
+        validateBirthDate(builder.birthDate);
         this.id = builder.id;
         this.name = builder.name;
         this.lastName = builder.lastName;
@@ -25,6 +36,42 @@ public class User {
         this.phone = builder.phone;
         this.birthDate = builder.birthDate;
         this.role = builder.role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getIdentityDocument() {
+        return identityDocument;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public static class Builder {
@@ -118,5 +165,42 @@ public class User {
                 .birthDate(this.birthDate)
                 .role(role)
                 .build();
+    }
+
+    private void validateName(String name) {
+        FieldValidator.validateNotBlank(name, ValidationMessages.NAME_NOT_BLANK);
+        FieldValidator.validatePattern(name, "^[a-zA-Z]+$", ValidationMessages.NAME_VALID_FORMAT);
+        FieldValidator.validateMaxLength(name, 255, ValidationMessages.NAME_SIZE);
+    }
+
+    private void validateLastName(String lastName) {
+        FieldValidator.validatePattern(lastName, "^[a-zA-Z]*$", ValidationMessages.LAST_NAME_VALID_FORMAT);
+        FieldValidator.validateMaxLength(lastName, 255, ValidationMessages.LAST_NAME_SIZE);
+    }
+
+    private void validateIdentityDocument(String identityDocument) {
+        FieldValidator.validateNotBlank(identityDocument, ValidationMessages.IDENTITY_DOCUMENT_NOT_BLANK);
+        FieldValidator.validatePattern(identityDocument, "\\d+", ValidationMessages.IDENTITY_DOCUMENT_NUMERIC);
+    }
+
+    private void validateEmail(String email) {
+        FieldValidator.validateNotBlank(email, ValidationMessages.EMAIL_NOT_BLANK);
+        FieldValidator.validatePattern(email, "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", ValidationMessages.EMAIL_VALID_FORMAT);
+    }
+
+    private void validatePassword(String password) {
+        FieldValidator.validateNotBlank(password, ValidationMessages.PASSWORD_NOT_BLANK);
+        FieldValidator.validateMinLength(password, 8, ValidationMessages.PASSWORD_MIN_SIZE);
+    }
+
+    private void validatePhone(String phone) {
+        FieldValidator.validateNotBlank(phone, ValidationMessages.PHONE_NOT_BLANK);
+        FieldValidator.validatePattern(phone, "(\\+\\d{1,12}|\\d{1,12})", ValidationMessages.PHONE_VALID_FORMAT);
+    }
+
+    private void validateBirthDate(LocalDate birthDate) {
+        if (birthDate == null || !birthDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(ValidationMessages.BIRTH_DATE_PAST);
+        }
     }
 }

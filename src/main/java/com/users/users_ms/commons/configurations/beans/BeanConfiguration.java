@@ -6,6 +6,7 @@ import com.users.users_ms.domain.ports.out.AuthenticationPort;
 import com.users.users_ms.domain.ports.out.PasswordEncoderPort;
 import com.users.users_ms.domain.ports.out.RestaurantFeignPort;
 import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.services.AuthenticationService;
 import com.users.users_ms.domain.usecases.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +37,11 @@ public class BeanConfiguration {
         return new RegisterEmployeeUseCase(passwordEncoderPort, restaurantFeignPort, persistencePort);
     }
     @Bean
-    public LoginServicePort loginUseCase(AuthenticationPort authenticationPort){
-        return new LoginUseCase(authenticationPort);
+    public LoginServicePort loginUseCase(AuthenticationPort authenticationPort, AuthenticationService authenticationService) {
+        return new LoginUseCase(authenticationPort, authenticationService);
+    }
+    @Bean
+    public AuthenticationService authenticationService(UserPersistencePort userPersistencePort) {
+        return new AuthenticationService(userPersistencePort);
     }
 }
