@@ -13,3 +13,7 @@ spring:
       enabled: true
   security:
     enabled: false
+
+
+jwt:
+  secret-key: UltraClaveSuperSecretaIndescifrable32
