@@ -4,11 +4,11 @@ import com.users.users_ms.domain.model.Role;
 import com.users.users_ms.domain.ports.in.ValidateServicePort;
 import com.users.users_ms.domain.ports.out.UserPersistencePort;
 
-public class ValidateUseCase implements ValidateServicePort {
+public class ValidateOwnerUseCase implements ValidateServicePort {
 
     private final UserPersistencePort userPort;
 
-    public ValidateUseCase(UserPersistencePort userPort) {
+    public ValidateOwnerUseCase(UserPersistencePort userPort) {
         this.userPort = userPort;
     }
 
