@@ -17,6 +17,8 @@ public class UserJpaAdapter implements UserPersistencePort {
 
     private final UserRepository userRepository;
 
+
+
     public UserJpaAdapter(UserRepository userRepository) {
         this.userRepository = userRepository;
 

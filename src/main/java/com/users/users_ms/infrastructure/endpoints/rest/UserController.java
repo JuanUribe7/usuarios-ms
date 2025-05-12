@@ -49,7 +49,6 @@ public class UserController {
     }
 
     @Operation(summary = "Register Client", description = "Creates a new user with role CLIENT")
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/client")
     @ResponseStatus(HttpStatus.CREATED)
     public String createClient(
