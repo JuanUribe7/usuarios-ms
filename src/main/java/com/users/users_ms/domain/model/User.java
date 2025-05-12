@@ -1,8 +1,6 @@
 package com.users.users_ms.domain.model;
 
-import com.users.users_ms.commons.constants.ValidationMessages;
-import com.users.users_ms.domain.helper.FieldValidator;
-import com.users.users_ms.domain.services.ValidationFieldsService;
+
 
 import java.time.LocalDate;
 import java.time.Period;

@@ -5,7 +5,7 @@ import com.users.users_ms.commons.exceptions.AlreadyExistsException;
 
 public class UniquenessValidator {
 
-    private UniquenessValidator() {
+    UniquenessValidator() {
         throw new UnsupportedOperationException(ExceptionMessages.UTILITY_CLASS_INSTANTIATION);
     }
 

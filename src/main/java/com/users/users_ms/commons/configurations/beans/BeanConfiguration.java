@@ -3,10 +3,7 @@ package com.users.users_ms.commons.configurations.beans;
 
 import com.users.users_ms.domain.model.User;
 import com.users.users_ms.domain.ports.in.*;
-import com.users.users_ms.domain.ports.out.AuthenticationPort;
-import com.users.users_ms.domain.ports.out.PasswordEncoderPort;
-import com.users.users_ms.domain.ports.out.RestaurantFeignPort;
-import com.users.users_ms.domain.ports.out.UserPersistencePort;
+import com.users.users_ms.domain.ports.out.*;
 import com.users.users_ms.domain.services.AuthenticationService;
 import com.users.users_ms.domain.services.UserValidationService;
 import com.users.users_ms.domain.services.ValidationFieldsService;
@@ -54,7 +51,8 @@ public class BeanConfiguration {
         return new LoginUseCase(authenticationPort, authenticationService);
     }
     @Bean
-    public AuthenticationService authenticationService(UserPersistencePort userPersistencePort) {
-        return new AuthenticationService(userPersistencePort);
+    public AuthenticationService authenticationService(UserPersistencePort userPersistencePort,
+                                                       TokenProviderPort tokenProviderPort) {
+        return new AuthenticationService(userPersistencePort, tokenProviderPort);
     }
 }

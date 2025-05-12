@@ -1,6 +1,6 @@
 package com.users.users_ms;
 
-import com.fasterxml.jackson.databind.JsonNode;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.users.users_ms.application.dto.request.CreateClientRequestDto;
 import com.users.users_ms.application.dto.request.CreateEmployeeRequestDto;

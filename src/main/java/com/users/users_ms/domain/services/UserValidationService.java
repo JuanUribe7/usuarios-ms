@@ -13,7 +13,7 @@ public class UserValidationService implements ValidationFields {
     @Override
     public void validateUser(User user) {
         validationFieldsService.validateName(user.getName());
-        if (user.getLastName() == null || user.getLastName().isEmpty()) {
+        if (user.getLastName() != null && !user.getLastName().isEmpty()) {
             validationFieldsService.validateLastName(user.getLastName());
         }
 
