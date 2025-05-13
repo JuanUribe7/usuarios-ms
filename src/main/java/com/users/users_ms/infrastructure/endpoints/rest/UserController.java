@@ -74,10 +74,5 @@ public class UserController {
     }
 
 
-    @GetMapping()
-    public ResponseEntity<String> getAllUsers() {
-        return ResponseEntity.
-    }
-
 
 }
