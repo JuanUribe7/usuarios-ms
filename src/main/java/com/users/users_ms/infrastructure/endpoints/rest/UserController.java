@@ -57,6 +57,11 @@ public class UserController {
         return ResponseMessages.CLIENT_CREATED;
     }
 
+    @GetMapping("/{id}/phone")
+    public ResponseEntity<String> getPhoneByUserId(@PathVariable Long id) {
+        return ResponseEntity.ok(clientService.getPhoneByUserId(id));
+    }
+
 
     @Operation(summary = "Obtener rol de un usuario", description = "Retorna el rol del usuario por su ID")
     @ApiResponse(responseCode = "200", description = "Rol obtenido exitosamente")
@@ -66,6 +71,12 @@ public class UserController {
     public ResponseEntity<Boolean> existsAndIsOwner(@PathVariable Long id) {
         boolean exists =ownerService.existsAndIsOwner(id);
         return ResponseEntity.ok(exists);
+    }
+
+
+    @GetMapping()
+    public ResponseEntity<String> getAllUsers() {
+        return ResponseEntity.
     }
 
 
