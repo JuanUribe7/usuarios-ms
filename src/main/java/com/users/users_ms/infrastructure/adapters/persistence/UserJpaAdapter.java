@@ -25,6 +25,14 @@ public class UserJpaAdapter implements UserPersistencePort {
     }
 
     @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserEntityMapper::toModel)
+                .toList();
+    }
+
+    @Override
     public User saveUser(User user) {
 
         UserEntity entity = UserEntityMapper.toEntity(user);

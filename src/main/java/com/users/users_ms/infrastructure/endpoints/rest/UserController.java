@@ -3,9 +3,11 @@ package com.users.users_ms.infrastructure.endpoints.rest;
 import com.users.users_ms.application.dto.request.CreateClientRequestDto;
 import com.users.users_ms.application.dto.request.CreateEmployeeRequestDto;
 import com.users.users_ms.application.dto.request.CreateOwnerRequestDto;
+import com.users.users_ms.application.dto.response.UserResponseDto;
 import com.users.users_ms.application.services.EmployeeService;
 import com.users.users_ms.application.services.OwnerService;
 import com.users.users_ms.application.services.ClientService;
+import com.users.users_ms.application.services.UserService;
 import com.users.users_ms.commons.constants.ResponseMessages;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Users", description = "Operations related to user registration")
 @RequiredArgsConstructor
 @RestController
@@ -26,6 +30,21 @@ public class UserController {
     private final OwnerService ownerService;
     private final EmployeeService employeeService;
     private final ClientService clientService;
+    private final UserService userService;
+
+
+
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        return ResponseEntity.ok("System is up and running");
+    }
+
+    @Operation(summary = "List All Users", description = "Returns all users")
+    @GetMapping
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
 
     @Operation(summary = "Register Owner", description = "Creates a new user with role OWNER")
     @PreAuthorize("hasRole('ADMIN')")
