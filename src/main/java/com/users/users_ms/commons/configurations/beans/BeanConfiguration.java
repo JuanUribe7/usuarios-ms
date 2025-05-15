@@ -1,7 +1,7 @@
 package com.users.users_ms.commons.configurations.beans;
 
 
-import com.users.users_ms.domain.model.User;
+
 import com.users.users_ms.domain.ports.in.*;
 import com.users.users_ms.domain.ports.out.*;
 import com.users.users_ms.domain.services.AuthenticationService;
@@ -18,6 +18,11 @@ public class BeanConfiguration {
     @Bean
     public ValidationFields validationFields() {
         return new UserValidationService(new ValidationFieldsService());
+    }
+
+    @Bean
+    public ListUserServicePort listUserService(UserPersistencePort userPersistencePort) {
+        return new GetAllUsersUseCase(userPersistencePort);
     }
 
     @Bean
