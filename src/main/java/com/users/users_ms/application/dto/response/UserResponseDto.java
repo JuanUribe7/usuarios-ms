@@ -1,9 +1,14 @@
 package com.users.users_ms.application.dto.response;
 
-public record UserResponseDto(
-    Long id,
-    String name,
-    String lastName,
-    String email,
-    String phone
-) {}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class UserResponseDto {
+    private Long id;
+    private String name;
+    private String email;
+}

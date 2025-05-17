@@ -8,9 +8,16 @@ import java.util.Optional;
 public interface UserPersistencePort {
     List<User> getAllUsers();
 
-    User saveUser(User user);
-    void updateUser(User user);
+
+    User update(User user);
+
+    void delete(Long id);
+
     Optional<User> findByEmail(String email);
+
+    User save(User user);
+
+    User findById(Long id);
+
     boolean existsByEmail(String email);
-    Optional<User> findById(Long id);
 }
